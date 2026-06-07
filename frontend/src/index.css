@@ -1,0 +1,331 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* 2) BASE TOKENS — System A (Creative mint/purple) */
+:root {
+  /* Creative design system tokens */
+  --primary: #a8e6cf;
+  --primary-dark: #8cd6bb;
+  --secondary: #4144a3;
+  --accent: #3D418A;
+
+  --background: #f0fff9;
+  --foreground: #0F172A;
+
+  --muted: rgba(168, 230, 207, 0.2);
+  --card: rgba(255, 255, 255, 0.9);
+  --border: rgba(168, 230, 207, 0.4);
+
+  --glass: rgba(168, 230, 207, 0.2);
+  --glass-border: rgba(168, 230, 207, 0.5);
+
+  --mint: #a8e6cf;
+}
+
+/* 2b) BASE TOKENS — System B (Tailwind-like UI tokens) */
+:root {
+  --ui-text:      #0f172a;  /* slate-900 */
+  --ui-muted:     #64748b;  /* slate-500 */
+  --ui-border:    #e5e7eb;  /* gray-200 */
+
+  /* Default (indigo) primary */
+  --ui-primary:     #4f46e5;
+  --ui-primary-50:  #eef2ff;
+  --ui-primary-200: #c7d2fe;
+}
+
+/* 3) THEME VARIANTS — Example mint theme for UI tokens */
+.theme-mint {
+  --ui-primary:    #10b981;   /* emerald-500 (minty) */
+  --ui-primary-50: #ecfdf5;   /* soft mint wash */
+  --ui-primary-200:#a7f3d0;
+
+  /* Optional: mint‑tinted surfaces */
+  --ui-bg:   #7ce6c0;   /* very soft mint */
+  --ui-card: #ffffff;
+}
+
+/* 4) BASE ELEMENTS */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar { display: none; }
+
+/* Global font */
+html {
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+/* 5) TAILWIND DESIGN SYSTEM HOOKUP (optional) */
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* 6) TAILWIND COMPONENT UTILITIES */
+@layer components {
+  .input {
+    @apply w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
+  }
+  .label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-md bg-gray-200 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100;
+  }
+  .section-title {
+    @apply text-sm font-semibold uppercase tracking-wide text-gray-500 mb-2;
+  }
+
+  .min-h-80px { min-height: 80px; }
+  .min-h-96px { min-height: 96px; }
+  .max-w-140px { max-width: 140px; }
+
+  /* Token utility helpers (using System B tokens) */
+  .ui-card {
+    background-color: var(--ui-card);
+    border-color: var(--ui-border);
+  }
+  .ui-btn-primary {
+    background-color: var(--ui-primary);
+    color: #fff;
+  }
+  .ui-btn-secondary {
+    background-color: var(--ui-primary-50);
+    border-color: var(--ui-primary-200);
+    color: var(--ui-text);
+  }
+  .tab-active {
+    border-bottom: 2px solid var(--ui-primary);
+    color: var(--ui-primary);
+  }
+}
+
+/* 7) VISUAL UTILITIES (backgrounds, glass, scrollbars) */
+.bg-grid-white {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgba(255,255,255,0.2)'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E");
+}
+
+.bg-mesh-subtle {
+  background-image:
+    radial-gradient(at 0% 0%, hsla(168, 50%, 80%, 0.5) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(253, 40%, 65%, 0.3) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(282, 60%, 50%, 0.2) 0, transparent 50%);
+}
+
+/* Glass morphism + header */
+.glass-morphism {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+}
+.reflective-header {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* Leaf badge */
+.leaf-shape {
+  display: inline-block;
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), #7d1a8f);
+  color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 999px 999px 20px 999px;
+  border: none;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Custom Scrollbars (global) */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f0fff9; }
+::-webkit-scrollbar-thumb {
+  background: #3D418A;
+  border-radius: 10px;
+  border: 3px solid #f0fff9;
+}
+::-webkit-scrollbar-thumb:hover { background: #a8e6cf; }
+
+/* optional slim scrollbar for form column */
+.form-scroll::-webkit-scrollbar { width: 8px; }
+.form-scroll::-webkit-scrollbar-track { background: transparent; }
+.form-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(61,65,138,0.25);
+  border-radius: 999px;
+}
+.form-scroll {
+  scrollbar-color: rgba(61,65,138,0.25) transparent;
+  scrollbar-width: thin;
+}
+
+/* Input autofill color fix */
+input:-webkit-autofill {
+  -webkit-text-fill-color: #111827;
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* Password reveal icon (Edge/IE legacy) */
+.password-input::-ms-reveal,
+.confirm-password-input::-ms-reveal { display: none; }
+.password-input,
+.confirm-password-input { background: none !important; }
+
+/* 8) ANIMATIONS (kept all) */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+@keyframes floatRotate {
+  0%, 100% { transform: translateY(4px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(1deg); }
+}
+.leaf-animate { animation: floatRotate 4s ease-in-out infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%)  skewX(-15deg); }
+}
+.animate-shimmer { animation: shimmer 3s ease-in-out infinite; }
+
+@keyframes scale-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+.animate-scale-pulse { animation: scale-pulse 2s ease-in-out infinite; }
+
+.animate-bounce-subtle { animation: float 3s ease-in-out infinite; }
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+
+/* Ripple */
+@keyframes ripple {
+  from { transform: scale(0); opacity: 1; }
+  to   { transform: scale(4); opacity: 0; }
+}
+.animate-ripple { animation: ripple 0.6s linear forwards; }
+
+/* Orb pulse */
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1);   opacity: 0.25; }
+  50%      { transform: scale(1.18); opacity: 0.45; }
+}
+.animate-orb-pulse { animation: orbPulse 4.2s ease-in-out infinite; }
+
+/* Icon breathe */
+@keyframes iconBreathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50%      { transform: scale(1.08); opacity: 1; }
+}
+.animate-icon-breathe { animation: iconBreathe 2.8s ease-in-out infinite; }
+
+/* Vertical lines soft */
+@keyframes verticalLinesSoft {
+  from { background-position-y: 0; }
+  to   { background-position-y: 30px; }
+}
+.animate-vertical-lines-soft { animation: verticalLinesSoft 14s linear infinite; }
+
+/* Animated multi‑color gradient */
+.animated-gradient {
+  background: linear-gradient(120deg, #ff6f91, #845ec2, #00c9a7, #ff6f91);
+  background-size: 300% 300%;
+  animation: gradientMove 3s ease infinite;
+}
+
+@layer components {
+  .chip {
+    @apply bg-white/80 text-[#3D418A] border-white/60 hover:bg-white hover:shadow-md
+           transition-all duration-200;
+    box-shadow: 0 8px 18px -12px rgba(61, 65, 138, 0.25);
+  }
+
+  .active-chip {
+    @apply bg-gradient-to-r from-[#26b2d1] to-[#c86ad6] text-white border-transparent;
+    box-shadow:
+      0 12px 28px -12px rgba(38, 178, 209, 0.55),
+      0 8px 18px -14px rgba(200, 106, 214, 0.35);
+  }
+
+  .chip:hover {
+    box-shadow:
+      0 12px 28px -16px rgba(61, 65, 138, 0.25),
+      0 8px 18px -18px rgba(38, 178, 209, 0.25);
+    border-color: rgba(61, 65, 138, 0.2);
+  }
+
+  .kbd {
+    @apply px-1.5 py-[1px] rounded-md bg-white/80 border border-white/60 text-[#3D418A] shadow-sm;
+  }
+}
+
+@layer components {
+  /* Shine sweep overlay */
+  .btn-shine-container {
+    @apply absolute inset-0 pointer-events-none rounded-full overflow-hidden;
+  }
+  .btn-shine {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 50%;
+    height: 100%;
+    transform: skewX(-20deg);
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.24) 50%,
+      rgba(255,255,255,0) 100%
+    );
+    animation: btn-shine-move 2.4s ease-in-out infinite;
+  }
+  @keyframes btn-shine-move {
+    0%   { left: -150%; }
+    60%  { left: 160%; }
+    100% { left: 160%; }
+  }
+
+  /* Ripple */
+  .btn-ripple {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(0);
+    animation: btn-ripple 500ms ease-out forwards;
+  }
+  @keyframes btn-ripple {
+    to { transform: scale(2.6); opacity: 0; }
+  }
+}
