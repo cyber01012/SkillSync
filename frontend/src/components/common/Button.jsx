@@ -16,26 +16,24 @@ const Button = forwardRef(function Button(
     const newRipple = { x, y, size, key: Date.now() };
     setRippleArray((prev) => [...prev, newRipple]);
 
-    // ripple cleanup
     setTimeout(() => {
       setRippleArray((prev) => prev.filter((r) => r.key !== newRipple.key));
     }, 600);
 
-    // parent onClick (sync) — popup blockers friendly
     if (typeof onClick === "function") onClick(e);
   };
 
   const variants = {
     primary:
-      "bg-[#4144a3] text-white hover:bg-[#343782] shadow-[0_4px_14px_0_rgba(65,68,163,0.39)] hover:shadow-[0_6px_20px_rgba(65,68,163,0.23)]",
+      "bg-[#133B6C] text-white hover:bg-[#0D2847] shadow-[0_4px_14px_0_rgba(19,59,108,0.39)] hover:shadow-[0_6px_20px_rgba(19,59,108,0.23)]",
     secondary:
-      "bg-gradient-to-br from-[#5D5FEF] via-[#7B7FE0] to-[#4144A3] text-white hover:from-[#6B6DFF] hover:via-[#8C8FFF] hover:to-[#4D50B5] shadow-[0_10px_30px_-5px_rgba(93,95,239,0.5)] hover:shadow-[0_20px_40px_-10px_rgba(93,95,239,0.7)] border-t border-white/30",
+      "bg-gradient-to-br from-[#FD8566] via-[#E86A4A] to-[#D05438] text-white hover:from-[#FF9A7D] hover:via-[#F08060] hover:to-[#E07058] shadow-[0_10px_30px_-5px_rgba(253,133,102,0.5)] hover:shadow-[0_20px_40px_-10px_rgba(253,133,102,0.7)] border-t border-white/30",
     outline:
-      "bg-transparent border-2 border-[#4144a3] text-[#3D418A] hover:bg-[#4144a3] hover:text-white shadow-none hover:shadow-lg",
+      "bg-transparent border-2 border-[#133B6C] text-[#133B6C] hover:bg-[#133B6C] hover:text-white shadow-none hover:shadow-lg",
     white:
-      "bg-white text-[#3D418A] hover:bg-[#f0fff9] shadow-xl hover:shadow-2xl",
+      "bg-white text-[#133B6C] hover:bg-[#FFF8F5] shadow-xl hover:shadow-2xl",
     ghost:
-      "bg-transparent text-[#3D418A] hover:bg-[#4144A3] hover:text-white shadow-none",
+      "bg-transparent text-[#133B6C] hover:bg-[#133B6C] hover:text-white shadow-none",
   };
 
   return (
@@ -54,7 +52,6 @@ const Button = forwardRef(function Button(
         ${className}
       `}
     >
-      {/* ripple effect */}
       {rippleArray.map((ripple) => (
         <span
           key={ripple.key}
@@ -68,7 +65,6 @@ const Button = forwardRef(function Button(
         />
       ))}
 
-      {/* Glossy Overlay */}
       <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
 
       <span className="relative z-10 flex items-center justify-center gap-3">

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
 export const MailIcon = (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"  
     viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
     aria-hidden="true">
@@ -44,8 +44,8 @@ export const EyeOffIcon = (
        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
        className="text-gray-600">
     <path d="M3 3l18 18M10.58 10.58A3 3 0 0 0 12 15a3 3 0 0 0 2.42-1.36"/>
-    <path d="M9.88 5.06A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.79 19.79 0 0 1-5.1 6.1"/>
-    <path d="M6.12 6.12A19.79 19.79 0 0 0 1 12s4 8 11 8a10.94 10.94 0 0 0 2.12-.22"/>
+    <path d="M9.88 5.06A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.79 19.79 0 0 1-5.1 6.1"/>   
+    <path d="M6.12 6.12A19.79 19.79 0 0 0 1 12s4 8 11 8a10.94 10.94 0 0 0 2.12-.22"/>       
   </svg>
 );
 
@@ -81,7 +81,7 @@ export const ErrorIcon = (
 export const Spinner = (
   <svg className="animate-spin text-gray-400" xmlns="http://www.w3.org/2000/svg"
     width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">        
     <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
     <path d="M12 2a10 10 0 0 1 10 10" />
   </svg>
@@ -108,8 +108,8 @@ export default function SmartInput({
   const ringClasses = useMemo(() => {
     if (status === "valid")   return "focus:ring-2 focus:ring-emerald-500";
     if (status === "invalid") return "focus:ring-2 focus:ring-red-500";
-    if (status === "loading") return "focus:ring-2 focus:ring-[#3D418A]";
-    return "focus:ring-2 focus:ring-[#3D418A]";
+    if (status === "loading") return "focus:ring-2 focus:ring-[#133B6C]";
+    return "focus:ring-2 focus:ring-[#133B6C]";
   }, [status]);
 
   const borderColor = useMemo(() => {
@@ -132,7 +132,7 @@ export default function SmartInput({
           </div>
         )}
 
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2"> 
           {endSlot ? (
             <div className="flex items-center">{endSlot}</div>
           ) : status === "loading" ? (

@@ -12,7 +12,6 @@ export default function AuthModal({ mode, close, setMode, onGoogleAuth }) {
         exit={{ opacity: 0 }}
         onClick={close}
       >
-        {/* CARD as hover group */}
         <motion.div
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.9, y: 20 }}
@@ -21,7 +20,6 @@ export default function AuthModal({ mode, close, setMode, onGoogleAuth }) {
           transition={{ duration: 0.25, ease: "easeOut" }}
           className="group relative bg-white rounded-2xl w-[900px] h-[520px] overflow-hidden shadow-2xl"
         >
-          {/* Close (×) — keep it above everything */}
           <button
             type="button"
             aria-label="Close"
@@ -33,15 +31,14 @@ export default function AuthModal({ mode, close, setMode, onGoogleAuth }) {
               inline-flex items-center justify-center
               w-9 h-9 rounded-full
               bg-black/5 hover:bg-black/10
-              text-[#3D418A] hover:text-black
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4144a3]
+              text-[#133B6C] hover:text-black
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#133B6C]
               pointer-events-auto
             "
           >
             <span className="text-xl leading-none">×</span>
           </button>
 
-          {/* Key by mode so direction change animates */}
           <AnimatePresence mode="wait" initial={false}>
             <AuthLayout
               key={mode}

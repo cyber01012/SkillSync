@@ -3,24 +3,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import SmartInput, { MailIcon, LockIcon } from "./ui/SmartInput.jsx";
 import { getPasswordStrength } from "./form/PasswordStrength";
 
-const shellGradient = "bg-gradient-to-br from-[#6be7cf] via-[#7cbddc] to-[#adb6e5]";
+const shellGradient = "bg-gradient-to-br from-[#6be7cf] via-[#7cbddc] to-[#adb6e5]";        
 const cardCls = `rounded-2xl bg-white/50 backdrop-blur-md shadow-xl border border-white/40 px-6 sm:px-7 py-6 sm:py-7`;
 
 const stepVariants = {
   initial: (dir) => ({ x: dir > 0 ? 40 : -40, opacity: 0 }),
-  animate: { x: 0, opacity: 1, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } },
+  animate: { x: 0, opacity: 1, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } },  
   exit: (dir) => ({ x: dir > 0 ? -40 : 40, opacity: 0, transition: { duration: 0.25, ease: "easeIn" } }),
 };
 
 const cardVariants = {
   initial: { opacity: 0, scale: 0.94, y: 18 },
   animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } },
-  exit: { opacity: 0, scale: 0.94, y: 18, transition: { duration: 0.25, ease: "easeIn" } },
+  exit: { opacity: 0, scale: 0.94, y: 18, transition: { duration: 0.25, ease: "easeIn" } }, 
 };
 
 export default function ForgotWindow({
-  appLogoSrc = "/logo.png",
-  appName = "SkillmatriX",
+  appLogoSrc = "/images/logo.png",
+  appName = "SkillSync",
   onClose,
   onBackToLogin,
   onSendOtp,
@@ -117,7 +117,7 @@ export default function ForgotWindow({
         await onSendOtp?.(email);
         setMsg({ type: "success", text: "OTP sent. Expires in 15 minutes." });
         const current = loadMeta(normEmail);
-        const updated = { ...current, count: Math.max(1, (current.count || 0) + 1) };
+        const updated = { ...current, count: Math.max(1, (current.count || 0) + 1) };       
         setResendMeta(updated); saveMeta(normEmail, updated);
         go(1);
       } catch (e) { setMsg({ type: "error", text: e?.message ?? "Failed to send OTP." }); } finally { setLoading(false); }
@@ -164,50 +164,50 @@ export default function ForgotWindow({
     <>
       <motion.div className="fixed inset-0 z-40 bg-black/35 backdrop-blur-[12px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
       <motion.div className="fixed inset-0 z-50 flex items-center justify-center" onMouseMove={revealClose}>
-        <motion.div variants={cardVariants} initial="initial" animate="animate" exit="exit" className={`relative w-[94%] sm:w-[420px] md:w-[480px] ${shellGradient} rounded-2xl shadow-2xl overflow-visible`}>
-          <button onClick={onClose} className={`absolute -top-3 -right-3 rounded-full bg-white/90 text-[#2A2771] shadow-md transition ${showClose ? "opacity-100" : "opacity-0"} hover:scale-105`} style={{ padding: "6px 8px" }}>✕</button>
+        <motion.div variants={cardVariants} initial="initial" animate="animate" exit="exit" className={`relative w-[94%] sm:w-[420px] md:w-[480px] bg-gradient-to-br from-[#133B6C] via-[#5F90D4] to-[#FD8566] rounded-2xl shadow-2xl overflow-visible`}>
+          <button onClick={onClose} className={`absolute -top-3 -right-3 rounded-full bg-white/90 text-[#133B6C] shadow-md transition ${showClose ? "opacity-100" : "opacity-0"} hover:scale-105`} style={{ padding: "6px 8px" }}>✕</button>
           <div className="px-6 pb-6 pt-3">
             <div className={cardCls}>
               <div className="flex items-center justify-center gap-2 mb-4">
                 <img src={appLogoSrc} alt="logo" className="h-9 w-9 rounded-md object-contain" />
-                <span className="text-lg sm:text-xl font-semibold text-[#2A2771]">{appName}</span>
+                <span className="text-lg sm:text-xl font-semibold text-[#133B6C]">{appName}</span>
               </div>
               <div className="flex items-center justify-between mb-6">
-                <div className="text-2xl sm:text-[28px] font-semibold text-[#2A2771] tracking-tight">Reset password</div>
-                <button type="button" onClick={handleBack} disabled={step === 0} className={`text-sm font-semibold ${step === 0 ? "text-[#2A2771]/40" : "text-[#2A2771]/80 hover:text-[#2A2771]"}`}>← Back</button>
+                <div className="text-2xl sm:text-[28px] font-semibold text-[#133B6C] tracking-tight">Reset password</div>
+                <button type="button" onClick={handleBack} disabled={step === 0} className={`text-sm font-semibold ${step === 0 ? "text-[#133B6C]/40" : "text-[#133B6C]/80 hover:text-[#133B6C]"}`}>← Back</button>
               </div>
               {msg.text && <div className={`mb-3 text-sm rounded-lg px-3 py-2 ${msg.type === "error" ? "bg-red-50/70 text-red-700" : "bg-emerald-50/70 text-emerald-700"}`}>{msg.text}</div>}
               <AnimatePresence custom={dir} mode="wait">
                 {step === 0 && (
                   <motion.div key="step-email" custom={dir} variants={stepVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
                     <SmartInput id="fp-email" label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} icon={MailIcon} status={email ? (/^\S+@\S+\.\S+$/.test(email) ? "valid" : "invalid") : "idle"} />
-                    <button onClick={handleNext} disabled={loading} className="w-full rounded-xl bg-[#3D418A] text-white font-semibold py-2.5 hover:bg-[#343782] transition">{loading ? "Sending..." : "Send OTP"}</button>
+                    <button onClick={handleNext} disabled={loading} className="w-full rounded-xl bg-[#133B6C] text-white font-semibold py-2.5 hover:bg-[#0D2847] transition">{loading ? "Sending..." : "Send OTP"}</button>
                   </motion.div>
                 )}
                 {step === 1 && (
                   <motion.div key="step-otp" custom={dir} variants={stepVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
                     <SmartInput id="fp-otp" label="OTP Code" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} maxLength={6} icon={LockIcon} status={otp.length === 6 ? "valid" : otp ? "invalid" : "idle"} />
-                    <div className="flex items-center justify-between text-xs text-[#2A2771]/80">
+                    <div className="flex items-center justify-between text-xs text-[#133B6C]/80">
                       <span>Expires in: <span className="font-semibold">{mmss}</span></span>
-                      <button onClick={resendOtp} disabled={loading || (resendMeta.count >= 2 && resendLeft > 0)} className="font-semibold hover:underline">{(resendMeta.count >= 2 && resendLeft > 0) ? `Resend in ${fmtHMS(resendLeft)}` : "Resend OTP"}</button>
+                      <button onClick={resendOtp} disabled={loading || (resendMeta.count >= 2 && resendLeft > 0)} className="font-semibold hover:underline text-[#FD8566]">{(resendMeta.count >= 2 && resendLeft > 0) ? `Resend in ${fmtHMS(resendLeft)}` : "Resend OTP"}</button>
                     </div>
-                    <button onClick={handleNext} disabled={loading || otp.length < 6} className="w-full rounded-xl bg-[#3D418A] text-white font-semibold py-2.5 hover:bg-[#343782] transition">{loading ? "Verifying..." : "Verify OTP"}</button>
+                    <button onClick={handleNext} disabled={loading || otp.length < 6} className="w-full rounded-xl bg-[#133B6C] text-white font-semibold py-2.5 hover:bg-[#0D2847] transition">{loading ? "Verifying..." : "Verify OTP"}</button>
                   </motion.div>
                 )}
                 {step === 2 && (
                   <motion.div key="step-reset" custom={dir} variants={stepVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
                     <SmartInput id="fp-new-password" label="New Password" type="password" value={newPwd} onChange={(e) => setNewPwd(e.target.value)} icon={LockIcon} status={newPwd.length >= 8 ? "valid" : newPwd ? "invalid" : "idle"} />
                     <SmartInput id="fp-confirm-password" label="Confirm Password" type="password" value={confirmPwd} onChange={(e) => setConfirmPwd(e.target.value)} icon={LockIcon} status={confirmPwd ? (confirmPwd === newPwd ? "valid" : "invalid") : "idle"} />
-                    <button onClick={updatePassword} disabled={loading} className="w-full rounded-xl bg-[#3D418A] text-white font-semibold py-2.5 hover:bg-[#343782] transition">{loading ? "Updating..." : "Update Password"}</button>
+                    <button onClick={updatePassword} disabled={loading} className="w-full rounded-xl bg-[#133B6C] text-white font-semibold py-2.5 hover:bg-[#0D2847] transition">{loading ? "Updating..." : "Update Password"}</button>
                   </motion.div>
                 )}
               </AnimatePresence>
               <div className="mt-4 flex items-center justify-center gap-2">
-                {[0, 1, 2].map((i) => <div key={i} className={`h-2.5 w-2.5 rounded-full ${i === step ? "bg-[#2A2771]" : "bg-white/70"}`} />)}
+                {[0, 1, 2].map((i) => <div key={i} className={`h-2.5 w-2.5 rounded-full ${i === step ? "bg-[#133B6C]" : "bg-white/70"}`} />)}
               </div>
               <div className="mt-5 flex items-center justify-between text-sm">
-                <div className="text-[#2A2771]/80">Remember? <button onClick={onBackToLogin} className="font-semibold text-[#2A2771] hover:underline">Login</button></div>
-                <button onClick={handleNext} disabled={step === 2 || loading} className="font-semibold text-[#2A2771] hover:underline">Next →</button>
+                <div className="text-[#133B6C]/80">Remember? <button onClick={onBackToLogin} className="font-semibold text-[#FD8566] hover:underline">Login</button></div>
+                <button onClick={handleNext} disabled={step === 2 || loading} className="font-semibold text-[#133B6C] hover:underline">Next →</button>
               </div>
             </div>
           </div>

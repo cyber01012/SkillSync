@@ -4,24 +4,24 @@ import { ChevronDown, HelpCircle } from "lucide-react";
 
 const faqs = [
     {
-        question: "How does SkillmatriX extract skills from my resume?",
-        answer: "We use Natural Language Processing (NLP) and our proprietary skill-extraction engine to scan your resume text, identifying not just keywords but context, impact, and hierarchy of skills to build a comprehensive profile.",
+        question: "How does SkillSync verify freelancer skills?",
+        answer: "We combine three verification layers: baseline skill tasks on registration, timed live challenges assigned by clients, and continuous behavioral tracking during work sessions. The Skill DNA Agent recalculates your trait scores after every completed session — no self-reporting allowed.",
     },
     {
-        question: "Is my personal data and resume secure?",
-        answer: "Absolutely. We employ industry-standard encryption. Your resume is processed to extract skills and then encrypted. We do not sell your data to third parties.",
+        question: "What is the Trust Score and how is it calculated?",
+        answer: "The Trust Score is a multi-factor weighted score (0-100) that replaces star ratings. It's computed from five factors: Delivery Consistency (25%), Client Retention (20%), Communication Quality (20%), Dispute History (15%), and Challenge Performance (20%). It cannot be gamed because it's based on actual platform behavior.",
     },
     {
-        question: "How does the Intelligent Resume Architect work?",
-        answer: "Our AI scans your existing profile and career goals to automatically generate a polished, ATS-friendly resume. It highlights your key achievements and tailors the language to match top industry standards, helping you stand out to recruiters immediately.",
+        question: "How does Proof-of-Work replay work?",
+        answer: "During live challenges and work sessions, we record all actions as step-by-step arrays stored in MongoDB. Clients can replay these sessions at variable speed to see exactly how a freelancer thinks, solves problems, and delivers work — before they ever make a hiring decision.",
     },
     {
-        question: "Can I use the AI Career Counselor for interview prep?",
-        answer: "Yes! Our AI counselor is trained on thousands of real-world interview scenarios. You can ask for role-specific questions and get feedback on your answers.",
+        question: "What are the 5 AI agents and what do they do?",
+        answer: "1) Trust Score Agent — recalculates scores on project completion. 2) Fraud Detection Agent — scans submissions and logins for anomalies. 3) Matching Agent — ranks freelancers by Skill DNA fit for each job. 4) Skill DNA Agent — updates behavioral fingerprints after every session. 5) Payment Release Agent — auto-releases escrow when milestones are approved.",
     },
     {
-        question: "What makes SkillmatriX different from LinkedIn or Indeed?",
-        answer: "While those platforms focus on listing jobs, SkillmatriX focuses on YOU. We provide the 'Why' and the 'How'—identifying what you lack and giving you a roadmap to get there, rather than just showing you jobs you might not be ready for yet.",
+        question: "How is SkillSync different from Upwork or Fiverr?",
+        answer: "Unlike platforms that rely on self-reported skills and easily-gamed star ratings, SkillSync makes skill verification the core. Every freelancer builds a Skill DNA fingerprint through actual work. Clients watch proof-of-work replays, set Trust Score thresholds, and hire with confidence. We also provide a Virtual Project Office with kanban, chat, and automated escrow payments.",
     },
 ];
 
@@ -31,27 +31,26 @@ export default function FAQ() {
     return (
         <section className="py-24 px-6 max-w-4xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-4">
-                <HelpCircle className="text-[#2ed386] w-6 h-6" />
-                <h2 className="text-[#3D418A]/60 font-bold tracking-widest uppercase text-sm">Common Questions</h2>
+                <HelpCircle className="text-[#FD8566] w-6 h-6" />
+                <h2 className="text-[#133B6C]/60 font-bold tracking-widest uppercase text-sm">Common Questions</h2>
             </div>
-            <h3 className="text-4xl md:text-5xl font-black text-[#3D418A] text-center mb-16">
-                Got questions? We've got <span className="text-[#2ed386] italic">answers.</span>
+            <h3 className="text-4xl md:text-5xl font-black text-[#133B6C] text-center mb-16">
+                Got questions? We've got <span className="text-[#FD8566] italic">answers.</span>
             </h3>
 
             <div className="space-y-4">
                 {faqs.map((faq, index) => (
                     <div
                         key={index}
-                        className="border border-[#4b4faf]/10 rounded-[2rem] overflow-hidden bg-white/40 shadow-lg shadow-[#4b4faf]/5"
+                        className="border border-[#133B6C]/10 rounded-[2rem] overflow-hidden bg-white/60 shadow-lg shadow-[#133B6C]/5"
                     >
                         <button
                             onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                            className="w-full p-8 text-left flex items-center justify-between hover:bg-white/60 transition-colors"
+                            className="w-full p-8 text-left flex items-center justify-between hover:bg-white/80 transition-colors"
                         >
-                            <span className="text-xl font-black text-[#4b4faf] pr-8">{faq.question}</span>
+                            <span className="text-xl font-black text-[#133B6C] pr-8">{faq.question}</span>
                             <ChevronDown
-                                className={`w-6 h-6 text-[#4b4faf]/40 transition-transform ${openIndex === index ? "rotate-180" : ""
-                                    }`}
+                                className={`w-6 h-6 text-[#133B6C]/40 transition-transform ${openIndex === index ? "rotate-180" : ""}`}
                             />
                         </button>
                         <AnimatePresence>
@@ -62,7 +61,7 @@ export default function FAQ() {
                                     exit={{ height: 0, opacity: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <div className="p-8 pt-0 text-[#2a2ea0]/70 text-lg leading-relaxed border-t border-[#4b4faf]/5 font-medium">
+                                    <div className="p-8 pt-0 text-[#4A6582] text-lg leading-relaxed border-t border-[#133B6C]/5 font-medium">
                                         {faq.answer}
                                     </div>
                                 </motion.div>

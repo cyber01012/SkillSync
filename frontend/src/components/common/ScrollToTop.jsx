@@ -33,7 +33,7 @@ export default function ScrollToTop() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
                     onClick={scrollToTop}
-                    className="fixed bottom-8 left-8 z-[100] w-14 h-14 bg-[#4144A3] text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-[#2E317A] transition-colors group"
+                    className="fixed bottom-8 left-8 z-[100] w-14 h-14 bg-[#133B6C] text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-[#0D2847] transition-colors group"
                 >
                     <ChevronUp className="w-8 h-8 group-hover:-translate-y-1 transition-transform" />
                 </motion.button>

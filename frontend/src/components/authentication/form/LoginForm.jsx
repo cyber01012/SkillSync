@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import SmartInput, { MailIcon, LockIcon } from "../ui/SmartInput.jsx";
 
 export default function LoginForm({
-  appLogoSrc = "/logo.png",
-  appName = "SkillmatriX",
+  appLogoSrc = "/images/logo.png",
+  appName = "SkillSync",
   onSubmit,
   onSwitch,
   onForgot,
@@ -70,14 +70,12 @@ export default function LoginForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Branding */}
       <div className="flex flex-col items-center gap-2">
         <img src={appLogoSrc} alt={`${appName} logo`} className="w-12 h-12 rounded-md object-contain" />
-        <span className="text-sm font-semibold text-[#2A2771]/90">{appName}</span>
+        <span className="text-sm font-semibold text-[#133B6C]/90">{appName}</span>
       </div>
-      <h2 className="text-xl font-semibold text-[#2A2771] text-center">Sign in</h2>
+      <h2 className="text-xl font-semibold text-[#133B6C] text-center">Sign in</h2>
 
-      {/* Inputs */}
       <SmartInput
         id="login-email"
         label="Email"
@@ -101,38 +99,35 @@ export default function LoginForm({
         message={password && password.length < 6 ? "At least 6 characters" : ""}
       />
 
-      {/* Remember + Forgot */}
       <div className="flex items-center justify-between text-sm">
-        <label className="flex items-center gap-2">
-          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+        <label className="flex items-center gap-2 text-[#4A6582] cursor-pointer">
+          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="accent-[#FD8566]" />
           Remember me
         </label>
-        <button type="button" onClick={onForgot} className="text-[#2A2771] hover:underline">
+        <button type="button" onClick={onForgot} className="text-[#FD8566] hover:underline font-semibold">
           Forgot?
         </button>
       </div>
 
-      {/* Error */}
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-md px-3 py-2">
           {error}
         </div>
       )}
 
-      {/* Submit */}
       <button
         type="submit"
         disabled={loading}
-        className={`w-full rounded-md bg-[#2A2771] text-white py-2.5 font-medium shadow-sm hover:bg-[#241f67] ${
+        className={`w-full rounded-xl bg-[#133B6C] text-white py-2.5 font-medium shadow-sm hover:bg-[#0D2847] transition-colors ${
           loading ? "opacity-70 cursor-not-allowed" : ""
         }`}
       >
         {loading ? "Signing in..." : "Sign in"}
       </button>
 
-      <div className="text-xs text-[#2A2771]/70 text-center">
-        Don’t have an account?{" "}
-        <button type="button" className="underline underline-offset-2" onClick={onSwitch}>
+      <div className="text-xs text-[#4A6582] text-center">
+        Don't have an account?{" "}
+        <button type="button" className="underline underline-offset-2 text-[#FD8566] font-semibold" onClick={onSwitch}>
           Sign up
         </button>
       </div>

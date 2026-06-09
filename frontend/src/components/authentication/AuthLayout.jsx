@@ -5,19 +5,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import LoginForm from "./form/LoginForm";
 import SignupForm from "./form/SignupForm";
 import ForgotWindow from "./ForgotWindow";
+import RoleSelection from "./RoleSelection";
 
 export default function AuthLayout({
   mode = "login",
   setMode,
   onGoogleAuth,
-  appLogoSrc = "/logo.png",
-  appName = "SkillmatriX",
+  appLogoSrc = "/images/logo.png",
+  appName = "SkillSync",
 }) {
+  const [selectedRole, setSelectedRole] = React.useState(null);
   const isLogin = mode === "login";
   const isSignup = mode === "signup";
 
   const formOnLeft = isSignup;
   const overlayOnLeft = isLogin;
+
+  // Reset role selection if mode changes away from signup
+  React.useEffect(() => {
+    if (!isSignup) setSelectedRole(null);
+  }, [isSignup]);
 
   const overlayVariants = {
     initial: (login) => ({ left: login ? "100%" : "-50%", opacity: 1 }),
@@ -44,7 +51,7 @@ async function handleLogin({ email, password }) {
     const backendMsg =
       err?.response?.data?.detail ||
       err?.response?.data?.message ||
-      (err?.response?.status === 401 ? "Your email or password is incorrect" : null) ||
+      (err?.response?.status === 401 ? "Your email or password is incorrect" : null) ||     
       err?.message ||
       "Login failed, please try again.";
     throw new Error(backendMsg);
@@ -53,15 +60,25 @@ async function handleLogin({ email, password }) {
 
 async function handleSignup(payload) {
   try {
-    await authApi.signup(payload);
+    await authApi.signup({ ...payload, role: selectedRole });
     setMode?.("login");
   } catch (err) {
     console.error("Signup failed:", err?.message || err);
+    throw err;
   }
 }
 
+  if (isSignup && !selectedRole) {
+    return (
+      <RoleSelection 
+        onSelectRole={(role) => setSelectedRole(role)}
+        onLoginClick={() => setMode?.("login")}
+      />
+    );
+  }
+
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full bg-[#FFF8F5]">
       {/* Grid: spacer + form column */}
       <div className="grid grid-cols-2 w-full h-full relative">
         {/* Spacer — order flips based on desired form side */}
@@ -73,7 +90,7 @@ async function handleSignup(payload) {
           style={{ scrollbarGutter: "stable both-edges" }}
         >
           <div className="w-full max-w-sm mx-auto">
-            
+
 
 {mode === "login" && (
   <LoginForm
@@ -108,13 +125,13 @@ async function handleSignup(payload) {
         exit="exit"
         className={`
           absolute top-0 bottom-0 w-1/2 z-10 pointer-events-none
-          bg-gradient-to-br from-[#6be7cf] via-[#7cbddc] to-[#adb6e5]
+          bg-gradient-to-br from-[#133B6C] via-[#5F90D4] to-[#FD8566]
           ${overlayOnLeft ? "rounded-r-2xl border-r border-white/30" : "rounded-l-2xl border-l border-white/30"}
           backdrop-blur-xl
         `}
-        style={{ boxShadow: "0 10px 26px rgba(124,189,220,0.15)" }}
+        style={{ boxShadow: "0 10px 26px rgba(19,59,108,0.15)" }}
       >
-        <div className="absolute inset-0 bg-white/24 pointer-events-none rounded-inherit" />
+        <div className="absolute inset-0 bg-white/10 pointer-events-none rounded-inherit" />
         <div className="h-full w-full flex items-center justify-center">
           <div className="px-10 text-center select-none max-w-md">
             {/* LOGO + name */}
@@ -127,33 +144,39 @@ async function handleSignup(payload) {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
             </div>
-            <p className="text-sm sm:text-base font-semibold text-[#2A2771]/90 mb-3">{appName}</p>
+            <p className="text-sm sm:text-base font-semibold text-white/90 mb-3">{appName}</p>
 
-            <h2 className="mt-2 text-2xl sm:text-2xl font-bold tracking-wide text-[#2A2771] whitespace-nowrap inline">
-              {isLogin ? "Welcome back to" : "Create your"}
-              <span className="text-[#26B291]">
-                {"\u00A0"}{appName}
-              </span>
+            <h2 className="mt-2 text-2xl sm:text-2xl font-bold tracking-wide text-white whitespace-nowrap inline">
+              {isLogin ? (
+                <>
+                  Welcome back to
+                  <span className="text-[#FD8566]">
+                    {"\u00A0"}{appName}
+                  </span>
+                </>
+              ) : (
+                "Hello there."
+              )}
             </h2>
 
-            <p className="mt-2 text-sm sm:text-base text-[#2A2771]/70">
+            <p className="mt-2 text-sm sm:text-base text-white/80">
               Professional, secure & modern authentication experience.
             </p>
 
             {/* CTA block */}
             <div className="mt-6 mx-auto w-full pointer-events-auto">
-              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm border border-white/50">
-                <h3 className="mt-1 text-sm sm:text-base font-semibold text-[#2A2771]">
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-center shadow-sm border border-white/20">
+                <h3 className="mt-1 text-sm sm:text-base font-semibold text-white">
                   Get your right job and right place
                 </h3>
-                <p className="mt-1 text-[13px] text-[#2A2771]/80 leading-snug">
+                <p className="mt-1 text-[13px] text-white/70 leading-snug">
                   Discover the best features of {appName}
                 </p>
               </div>
               <div className="mt-6 flex items-center justify-center gap-2 opacity-80">
-                <span className="inline-block h-px w-10 bg-[#26B291]/35" />
-                <span className="inline-block h-px w-20 bg-[#7cbddc]/30" />
-                <span className="inline-block h-px w-6 bg-[#26B291]/35" />
+                <span className="inline-block h-px w-10 bg-white/30" />
+                <span className="inline-block h-px w-20 bg-[#FD8566]/40" />
+                <span className="inline-block h-px w-6 bg-white/30" />
               </div>
             </div>
           </div>
