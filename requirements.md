@@ -22,9 +22,6 @@ Use this format:
 **REQUIRED:**
 - [ ] Landing page design replicated in main app
 - [ ] Consistent color palette across all pages
-  - [ ] Light mode colors match
-  - [ ] Dark mode colors defined
-  - [ ] Accessible contrast ratios (WCAG AA minimum)
 - [ ] Typography consistent
   - [ ] Heading fonts match landing
   - [ ] Body fonts match landing
