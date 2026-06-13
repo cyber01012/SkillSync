@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi, oauthApi } from '@/api/auth';
 import { passwordApi } from '@/api/dashboard';
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,6 +15,7 @@ export default function AuthLayout({
   appLogoSrc = "/images/logo.png",
   appName = "SkillSync",
 }) {
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = React.useState(null);
   const isLogin = mode === "login";
   const isSignup = mode === "signup";
@@ -40,33 +42,49 @@ export default function AuthLayout({
     }),
   };
 
-async function handleLogin({ email, password }) {
-  try {
-    const data = await authApi.login({ email, password });
-    if (data?.accessToken) localStorage.setItem("accessToken", data.accessToken);
-    if (data?.sessionId) localStorage.setItem("session_id", data.sessionId);
-    localStorage.setItem("sessionActive", String(data.sessionActive ?? true));
-    window.location.href = "/dashboard";
-  } catch (err) {
-    const backendMsg =
-      err?.response?.data?.detail ||
-      err?.response?.data?.message ||
-      (err?.response?.status === 401 ? "Your email or password is incorrect" : null) ||     
-      err?.message ||
-      "Login failed, please try again.";
-    throw new Error(backendMsg);
-  }
-}
+  async function handleLogin({ email, password }) {
+    try {
+      const data = await authApi.login({ email, password });
 
-async function handleSignup(payload) {
-  try {
-    await authApi.signup({ ...payload, role: selectedRole });
-    setMode?.("login");
-  } catch (err) {
-    console.error("Signup failed:", err?.message || err);
-    throw err;
+      // Store token and role from backend (snake_case)
+      if (data?.access_token) localStorage.setItem("accessToken", data.access_token);
+      if (data?.role) localStorage.setItem("role", data.role);
+
+      // Redirect based on role
+      const target = data.role === "freelancer" 
+        ? "/dashboard/freelancer" 
+        : "/dashboard/client";
+      navigate(target);
+
+    } catch (err) {
+      const backendMsg =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        (err?.response?.status === 401 ? "Your email or password is incorrect" : null) ||     
+        err?.message ||
+        "Login failed, please try again.";
+      throw new Error(backendMsg);
+    }
   }
-}
+
+  async function handleSignup(payload) {
+    try {
+      const data = await authApi.signup({ ...payload, role: selectedRole });
+
+      if (data?.access_token) {
+        localStorage.setItem("accessToken", data.access_token);
+        localStorage.setItem("role", data.role);
+
+        const target = data.role === "freelancer" 
+          ? "/dashboard/freelancer" 
+          : "/dashboard/client";
+        navigate(target);
+      }
+    } catch (err) {
+      console.error("Signup failed:", err?.message || err);
+      throw err;
+    }
+  }
 
   if (isSignup && !selectedRole) {
     return (

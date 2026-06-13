@@ -56,13 +56,13 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-[90px] font-black mb-4 tracking-tighter leading-[0.95] text-[#133B6C] flex flex-wrap items-baseline gap-4 justify-center lg:justify-start">
+              <h1 className="text-6xl md:text-7xl lg:text-[110px] font-black mb-4 tracking-tighter leading-[0.95] text-[#133B6C] flex flex-wrap items-baseline gap-4 justify-center lg:justify-start">
                 <GradientText colors={["#133B6C", "#5F90D4", "#FD8566", "#133B6C"]} animationSpeed={3}>
                   SkillSync
                 </GradientText>
-                <span className="opacity-90 text-3xl md:text-4xl lg:text-[52px]">AI.</span>
+               
               </h1>
-              <p className="text-xl md:text-2xl font-bold text-[#4A6582] mb-4">
+              <p className="text-xl md:text-3xl font-bold text-[#4A6582] mb-2 -mt-1 inline-block w-full text-center lg:text-left">
                 Proof-Based Freelancing.
               </p>
 

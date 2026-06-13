@@ -5,6 +5,7 @@ import { getPasswordStrength } from "./PasswordStrength";
 export default function SignupForm({
   appLogoSrc = "/images/logo.png",
   appName = "SkillSync",
+  initialRole = "freelancer",
   onSubmit,
   onSwitch,
   onGoogle,
@@ -16,6 +17,12 @@ export default function SignupForm({
   const [email, setEmail]         = useState("");
   const [password, setPassword]   = useState("");
   const [confirm, setConfirm]     = useState("");
+  const [role, setRole]           = useState(initialRole);
+
+  useEffect(() => {
+    setRole(initialRole);
+  }, [initialRole]);
+
 
   const [checkingUser, setCheckingUser] = useState(false);
   const [isUserUnique, setIsUserUnique] = useState(null);
@@ -56,7 +63,7 @@ export default function SignupForm({
     e.preventDefault();
     setError("");
 
-    if (!username?.trim()) { setError("Please enter a username."); return; }
+    if (!username?.trim() || username.trim().length < 3) { setError("Username must be at least 3 characters."); return; }
     if (isUserUnique === false) { setError("Username already taken."); return; }
     if (!firstName?.trim() || !lastName?.trim()) { setError("Please fill first name and last name."); return; }
     if (!/\S+@\S+\.\S+/.test(email)) { setError("Please enter a valid email."); return; }
@@ -67,10 +74,11 @@ export default function SignupForm({
     try {
       await onSubmit?.({
         username: username.trim(),
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
         email: email.trim().toLowerCase(),
         password,
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        role,
       });
     } catch (err) {
       setError(err?.message || "Signup failed.");
@@ -87,6 +95,18 @@ export default function SignupForm({
       </div>
       <h2 className="text-xl font-semibold text-[#133B6C] text-center">Create account</h2>
 
+      {/* Role selector */}
+      <div className="grid grid-cols-2 gap-3">
+        <label className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-colors ${role === "freelancer" ? "border-[#FD8566] bg-[#FD8566]/5" : "border-gray-200"}`}>
+          <input type="radio" name="role" value="freelancer" checked={role === "freelancer"} onChange={(e) => setRole(e.target.value)} className="hidden" />
+          <span className="text-sm font-medium text-[#133B6C]">Freelancer</span>
+        </label>
+        <label className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-colors ${role === "client" ? "border-[#FD8566] bg-[#FD8566]/5" : "border-gray-200"}`}>
+          <input type="radio" name="role" value="client" checked={role === "client"} onChange={(e) => setRole(e.target.value)} className="hidden" />
+          <span className="text-sm font-medium text-[#133B6C]">Client</span>
+        </label>
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         <SmartInput id="signup-first" label="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)}
                     autoComplete="given-name" icon={UserIcon} status={firstName ? "valid" : "idle"} />
@@ -99,7 +119,7 @@ export default function SignupForm({
       <SmartInput id="signup-email" label="Email Address" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email" icon={MailIcon} status={emailStatus}
                   message={email && !/\S+@\S+\.\S+/.test(email) ? "Please enter a valid email" : ""} />
-      
+
       <div className="grid grid-cols-2 gap-3">
         <SmartInput id="signup-password" label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password" icon={LockIcon} status={pwdStatus}

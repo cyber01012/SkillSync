@@ -1,70 +1,110 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
-function jsonFetch(path, { method = "GET", body, token, params, headers: extraHeaders, keepalive = false } = {}) {
-  const url = new URL(`${BASE_URL}${path}`);
-  if (params && typeof params === "object") {
-    Object.entries(params).forEach(([k, v]) => {
-      if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
-    });
+async function apiFetch(path, options = {}) {
+  const token = localStorage.getItem("accessToken");
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Request failed" }));
+    throw { response: { status: res.status, data: err } };
   }
 
-  const headers = { "Content-Type": "application/json", ...(extraHeaders || {}) };
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  return fetch(url.toString(), {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-    credentials: "omit",
-    keepalive,
-  }).then(async (res) => {
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const msg = data?.error || data?.message || `HTTP ${res.status}`;
-      const err = new Error(msg);
-      err.status = res.status;
-      err.data = data;
-      throw err;
-    }
-    return data;
-  });
+  return res.json();
 }
 
-
 export const authApi = {
-  login: (payload) => jsonFetch("/auth/login", { method: "POST", body: payload }),
-  signup: (payload) => jsonFetch("/auth/signup", { method: "POST", body: payload }),
-  logout: () => {
-    const sessionId = typeof window !== "undefined" ? localStorage.getItem("session_id") : null;
-   return jsonFetch("/auth/logout", {
+  login: async ({ email, password }) => {
+    const data = await apiFetch("/api/auth/login", {
       method: "POST",
-      body: {},
-      keepalive: true,
-      headers: {
-        "Session-Id": sessionId || "",
-        "User-Agent": typeof navigator !== "undefined" ? navigator.userAgent : "",
-      },
+      body: JSON.stringify({ email, password }),
     });
+    if (data.access_token) {
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("refreshToken", data.refresh_token);
+    }
+    return data;
   },
-  sendOtp: (email) =>
-    jsonFetch("/api/otp/forgot-password", {
+
+  signup: async ({ username, email, password, first_name, last_name, role }) => {
+    const data = await apiFetch("/api/auth/register", {
       method: "POST",
-      params: { email },
-    }),
-  resendForgotPassword: (email) =>
-    jsonFetch("/api/otp/forgot-password/resend", {
+      body: JSON.stringify({ username, email, password, first_name, last_name, role }),
+    });
+    if (data.access_token) {
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("refreshToken", data.refresh_token);
+    }
+    return data;
+  },
+
+  logout: async () => {
+    try {
+      await apiFetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
+  },
+
+  logoutAll: async () => {
+    try {
+      await apiFetch("/api/auth/logout-all", { method: "POST" });
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
+  },
+
+  refresh: async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) throw new Error("No refresh token");
+    
+    const data = await apiFetch("/api/auth/refresh", {
       method: "POST",
-      params: { email },
-    }),
-  resetWithOtp: ({ email, otp, newPassword }) =>
-    jsonFetch("/password/forgot", {
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    
+    if (data.access_token) {
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("refreshToken", data.refresh_token);
+    }
+    return data;
+  },
+
+  forgotPassword: ({ email }) =>
+    apiFetch("/api/auth/forgot-password", {
       method: "POST",
-      body: { email, otp, newPassword },
+      body: JSON.stringify({ email }),
     }),
+
+  resetPassword: ({ token, new_password }) =>
+    apiFetch("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, new_password }),
+    }),
+
+  me: () => apiFetch("/api/auth/me"),
+
+  profile: () => apiFetch("/api/auth/profile"),
+
+  clearAuth: () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("role");
+  },
 };
 
 export const oauthApi = {
   startGoogle: () => {
-    window.location.href = `${BASE_URL}/auth/google`;
+    window.location.href = `${API_BASE}/api/oauth/google/start`;
   },
 };

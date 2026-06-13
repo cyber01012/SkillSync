@@ -43,7 +43,7 @@ export default function Navbar({
           >
             <img src="/images/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
           </motion.div>
-          <span className="text-2xl font-black text-[#133B6C] tracking-tighter">SkillSync AI</span>
+          <span className="text-2xl font-black text-[#133B6C] tracking-tighter">SkillSync</span>
         </div>
 
         <div className="hidden md:flex items-center gap-10">
