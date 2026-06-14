@@ -46,6 +46,7 @@ def run_ddl():
     DROP TABLE IF EXISTS PasswordResetTokens;
     DROP TABLE IF EXISTS FreelancerProfiles;
     DROP TABLE IF EXISTS ClientProfiles;
+    DROP TABLE IF EXISTS Categories;
     DROP TABLE IF EXISTS Users;
 
     CREATE TABLE Users (
@@ -82,11 +83,24 @@ def run_ddl():
         CreatedAt DATETIME DEFAULT GETDATE()
     );
 
+    CREATE TABLE Categories (
+        CategoryID INT IDENTITY(1,1) PRIMARY KEY,
+        Domain NVARCHAR(50) NOT NULL,
+        Specialty NVARCHAR(50) NOT NULL,
+        DisplayName NVARCHAR(100) NOT NULL,
+        DNAProfileJSON NVARCHAR(MAX) NOT NULL,
+        IsActive BIT DEFAULT 1
+    );
+
     CREATE TABLE FreelancerProfiles (
         FreelancerID INT PRIMARY KEY FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
         DisplayName NVARCHAR(100),
         Headline NVARCHAR(255),
         Category NVARCHAR(50),
+        CategoryID INT FOREIGN KEY REFERENCES Categories(CategoryID),
+        HasBaselineDNA BIT DEFAULT 0,
+        Bio NVARCHAR(500),
+        ProfilePhotoURL NVARCHAR(500),
         AvailabilityStatus NVARCHAR(20) DEFAULT 'available'
     );
 
@@ -116,7 +130,7 @@ def run_ddl():
     CREATE TABLE ChallengeResults (
         ResultID INT IDENTITY(1,1) PRIMARY KEY,
         FreelancerID INT FOREIGN KEY REFERENCES FreelancerProfiles(FreelancerID),
-        ChallengeID INT,
+        ChallengeID NVARCHAR(50),
         Score INT,
         TimeTaken INT,
         CompletedAt DATETIME DEFAULT GETDATE()
@@ -257,11 +271,21 @@ def run_dml():
     ('freelancer2', 'freelancer2@outlook.com', :f2_pw, 'freelancer', 1),
     ('freelancer3', 'freelancer3@yahoo.com', :f3_pw, 'freelancer', 1);
 
-    INSERT INTO FreelancerProfiles (FreelancerID, DisplayName, Headline, Category, AvailabilityStatus) VALUES
-    (1, 'System Admin', 'Platform Administrator', 'System', 'busy'),
-    (4, 'Ali Khan', 'Full-Stack Developer | React & Python', 'Web Development', 'available'),
-    (5, 'Sara Ahmed', 'UI/UX Designer & Brand Strategist', 'Design', 'available'),
-    (6, 'Omar Farooq', 'Data Scientist & ML Engineer', 'Data Science', 'available');
+    INSERT INTO Categories (Domain, Specialty, DisplayName, DNAProfileJSON, IsActive) VALUES
+    ('frontend', 'react', 'React Frontend Developer', :dna_react, 1),
+    ('frontend', 'vue', 'Vue Frontend Developer', :dna_react, 1),
+    ('frontend', 'css', 'CSS/Tailwind Developer', :dna_css, 1),
+    ('backend', 'python', 'Python Backend Developer', :dna_python, 1),
+    ('backend', 'java', 'Java Backend Developer', :dna_python, 1),
+    ('backend', 'nodejs', 'Node.js Backend Developer', :dna_python, 1),
+    ('fullstack', 'mern', 'MERN Stack Developer', :dna_mern, 1),
+    ('fullstack', 'python_react', 'Python + React Developer', :dna_mern, 1);
+
+    INSERT INTO FreelancerProfiles (FreelancerID, DisplayName, Headline, Category, CategoryID, HasBaselineDNA, AvailabilityStatus) VALUES
+    (1, 'System Admin', 'Platform Administrator', 'System', NULL, 0, 'busy'),
+    (4, 'Ali Khan', 'Full-Stack Developer | React & Python', 'python', 4, 1, 'available'),
+    (5, 'Sara Ahmed', 'UI/UX Designer & Brand Strategist', 'react', 1, 1, 'available'),
+    (6, 'Omar Farooq', 'Data Scientist & ML Engineer', 'python', 4, 1, 'available');
 
     INSERT INTO ClientProfiles (ClientID, CompanyName, IndustryID, IsVerified, TrustLevel) VALUES
     (2, 'TechCorp Solutions', 1, 1, 'premium'),
@@ -302,9 +326,9 @@ def run_dml():
     (3, 'Mobile App UI/UX', 75, 'intermediate', 'closed');
 
     INSERT INTO ChallengeResults (FreelancerID, ChallengeID, Score, TimeTaken) VALUES
-    (4, 1, 85, 720), (4, 2, 78, 540),
-    (5, 1, 92, 600), (5, 2, 88, 480),
-    (6, 1, 95, 450), (6, 2, 90, 510);
+    (4, 'BL-PY-001', 85, 720), (4, 'BL-PY-002', 78, 540),
+    (5, 'BL-RT-001', 92, 600), (5, 'BL-RT-002', 88, 480),
+    (6, 'BL-PY-001', 95, 450), (6, 'BL-PY-002', 90, 510);
 
     COMMIT;
     """
@@ -317,6 +341,10 @@ def run_dml():
             "f1_pw": hash_pw("freelancer123"),
             "f2_pw": hash_pw("freelancer123"),
             "f3_pw": hash_pw("freelancer123"),
+            "dna_react": '{"traits":["technical","creativity","reliability","performance","speed","deadline"],"weights":[0.25,0.25,0.20,0.15,0.05,0.10],"labels":{"technical":"Technical Accuracy","creativity":"Creativity","reliability":"Reliability","performance":"Performance","speed":"Speed","deadline":"Deadline"}}',
+            "dna_css": '{"traits":["technical","creativity","reliability","performance","speed","deadline"],"weights":[0.25,0.30,0.10,0.20,0.05,0.10],"labels":{"technical":"Technical Accuracy","creativity":"Creativity","reliability":"Reliability","performance":"Performance","speed":"Speed","deadline":"Deadline"}}',
+            "dna_python": '{"traits":["technical","creativity","reliability","performance","speed","deadline"],"weights":[0.30,0.10,0.25,0.10,0.15,0.10],"labels":{"technical":"Technical Accuracy","creativity":"Creativity","reliability":"Reliability","performance":"Performance","speed":"Speed","deadline":"Deadline"}}',
+            "dna_mern": '{"traits":["technical","creativity","reliability","performance","speed","deadline"],"weights":[0.28,0.18,0.22,0.12,0.10,0.10],"labels":{"technical":"Technical Accuracy","creativity":"Creativity","reliability":"Reliability","performance":"Performance","speed":"Speed","deadline":"Deadline"}}',
         })
 
     print("✅ DML + TCL Complete")

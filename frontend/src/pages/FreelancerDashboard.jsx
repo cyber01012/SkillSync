@@ -1,141 +1,168 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/auth";
+import { profileApi } from "../api/profile";
 import { dnaApi } from "../api/dna";
-import { baselineApi } from "../api/baseline";
+import ProfileCard from "../components/dashboard/ProfileCard";
 import SkillDNACard from "../components/dashboard/SkillDNACard";
-import TrustScoreRing from "../components/dashboard/TrustScoreRing";
 import DNATimeline from "../components/dashboard/DNATimeline";
-import { Zap, Trophy, ArrowRight } from "lucide-react";
+import ActivityFeed from "../components/dashboard/ActivityFeed";
+import AuthMenu from "../components/dashboard/AuthMenu";
 import DashboardSidebar from "../components/common/DashboardSidebar";
+import GradientText from "../components/design/GradientText";
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  return "Good Evening";
+}
 
 export default function FreelancerDashboard() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [scores, setScores] = useState([]);
-  const [trustScore, setTrustScore] = useState(null);
   const [snapshots, setSnapshots] = useState([]);
-  const [results, setResults] = useState([]);
+  const [activity, setActivity] = useState([]);
+  const [weights, setWeights] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [greeting, setGreeting] = useState(getGreeting());
 
+  // Update greeting every minute
   useEffect(() => {
-    loadData();
+    const interval = setInterval(() => {
+      setGreeting(getGreeting());
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   async function loadData() {
+    setError(null);
     try {
-      const [prof, dnaScores, trust, snaps, res] = await Promise.all([
-        authApi.profile(),
+      const status = await profileApi.getStatus();
+      if (!status.has_category) {
+        navigate("/category-selection");
+        return;
+      }
+      if (!status.has_baseline_dna) {
+        navigate("/baseline-challenge");
+        return;
+      }
+
+      const [prof, dnaScores, snaps, act, w] = await Promise.all([
+        profileApi.get(),
         dnaApi.getScores(),
-        dnaApi.getTrustScore(),
         dnaApi.getSnapshots(),
-        baselineApi.getResults(),
+        dnaApi.getActivity(),
+        dnaApi.getProfileWeights(),
       ]);
       setProfile(prof);
       setScores(dnaScores);
-      setTrustScore(trust);
       setSnapshots(snaps);
-      setResults(res);
+      setActivity(act);
+      setWeights(w.weights || {});
     } catch (err) {
-      console.error("Failed to load dashboard:", err);
+      setError("Failed to load dashboard");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   }
 
+  useEffect(() => {
+    loadData();
+    function onFocus() { loadData(); }
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [navigate]);
+
+  async function handlePhotoUpload(file) {
+    try {
+      await profileApi.uploadPhoto(file);
+      loadData();
+    } catch {
+      alert("Photo upload failed");
+    }
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFF8F5] flex items-center justify-center">
-        <div className="text-[#133B6C] font-bold">Loading your Skill DNA...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-[var(--color-coral)]/20 border-t-[var(--color-coral)] animate-spin" />
+          <p className="text-[var(--fg-primary)] font-bold animate-pulse">Loading your Skill DNA...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg-base)" }}>
+        <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-2">
+          <span className="text-2xl">⚠️</span>
+        </div>
+        <p className="text-red-500 font-bold">{error}</p>
+        <button type="button" onClick={loadData} className="btn-primary">Retry</button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8F5] flex">
-      <DashboardSidebar role="freelancer" />
-      
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-black text-[#133B6C]">Freelancer Dashboard</h1>
-            <span className="text-sm font-semibold text-[#4A6582]">
-                {profile?.DisplayName}
-            </span>
-        </div>
+    <div className="relative min-h-screen flex overflow-hidden font-sans" style={{ background: "var(--bg-base)" }}>
+      {/* Premium ambient background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-5%] w-[35%] h-[35%] bg-[var(--color-sky)]/8 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[35%] h-[35%] bg-[var(--color-coral)]/6 blur-[120px] rounded-full" />
+        <div className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[50%] h-[50%] bg-[var(--color-coral-100)]/10 blur-[150px] rounded-full" />
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            {/* Trust Score */}
-            <div className="bg-white rounded-2xl border border-[#E2D5CF] p-6 shadow-sm flex flex-col items-center">
-              <h3 className="text-sm font-bold text-[#8BA3BE] uppercase tracking-wider mb-4">
-                Trust Score
-              </h3>
-              <TrustScoreRing score={trustScore?.OverallScore || 50} size={140} />
-              <p className="mt-3 text-xs text-[#8BA3BE] text-center">
-                Based on 5 weighted factors
-              </p>
-            </div>
+      <DashboardSidebar
+        role="freelancer"
+        user={profile}
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
 
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl border border-[#E2D5CF] p-6 shadow-sm">
-              <h3 className="text-sm font-bold text-[#8BA3BE] uppercase tracking-wider mb-4">
-                Actions
-              </h3>
-              <button
-                onClick={() => navigate("/baseline-challenge")}
-                className="w-full flex items-center justify-between p-3 rounded-xl bg-[#133B6C] text-white hover:bg-[#0D2847] transition mb-3"
-              >
-                <span className="text-sm font-semibold flex items-center gap-2">
-                  <Zap size={16} /> Take Baseline Challenge
-                </span>
-                <ArrowRight size={16} />
-              </button>
-              <button className="w-full flex items-center justify-between p-3 rounded-xl border border-[#E2D5CF] text-[#133B6C] hover:bg-[#FFF0EC] transition">
-                <span className="text-sm font-semibold flex items-center gap-2">
-                  <Trophy size={16} /> View Jobs
-                </span>
-                <ArrowRight size={16} />
-              </button>
-            </div>
-          </div>
+      <main className="relative z-10 flex-1 p-6 overflow-y-auto transition-all duration-300 ease-in-out">
+      {/* Header */}
+<div className="flex items-start justify-between mb-10 max-w-7xl">
+  <div className="pt-1">
+    <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-none">
+      <GradientText animationSpeed={5} className="font-italic">
+        {greeting}
+      </GradientText>
+    </h1>
+    <p className="text-xl md:text-4xl font-bold italic text-[var(--fg-secondary)] mt-3">
+      <span className="text-[var(--color-coral)] font-black">{profile?.DisplayName?.split(' ')[0]}</span>
+    </p>
+  </div>
+  <div className="pt-2">
+    <AuthMenu user={profile} role="freelancer" />
+  </div>
+</div>
+        <div className="space-y-8 max-w-7xl">
+          {/* Profile Card - Full Width */}
+          <ProfileCard
+            profile={profile}
+            onEdit={() => navigate("/profile-settings")}
+            onPhotoUpload={handlePhotoUpload}
+          />
 
-          {/* Middle Column */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Skill DNA */}
-            <SkillDNACard scores={scores} />
-
-            {/* Challenge Results */}
-            {results.length > 0 && (
-              <div className="bg-white rounded-2xl border border-[#E2D5CF] p-6 shadow-sm">
-                <h3 className="text-lg font-black text-[#133B6C] mb-4">Challenge History</h3>
-                <div className="space-y-3">
-                  {results.map((r) => (
-                    <div
-                      key={r.ResultID}
-                      className="flex items-center justify-between p-3 bg-[#FFF8F5] rounded-xl"
-                    >
-                      <div>
-                        <p className="text-sm font-semibold text-[#133B6C]">
-                          Challenge #{r.ChallengeID}
-                        </p>
-                        <p className="text-xs text-[#8BA3BE]">
-                          {new Date(r.CompletedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-lg font-black text-[#FD8566]">{r.Score}</span>
-                        <span className="text-xs text-[#8BA3BE]">/100</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* DNA Timeline */}
+          {/* DNA Cards Grid - Equal Height */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            <SkillDNACard
+              scores={scores}
+              weights={weights}
+              overallDna={profile?.overall_dna}
+              categoryName={profile?.category_display_name}
+            />
             <DNATimeline snapshots={snapshots} />
           </div>
+
+          {/* Activity Feed - Full Width */}
+          <ActivityFeed items={activity} />
         </div>
       </main>
     </div>

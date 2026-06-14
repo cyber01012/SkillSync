@@ -76,7 +76,7 @@ export default function AuthLayout({
         localStorage.setItem("role", data.role);
 
         const target = data.role === "freelancer" 
-          ? "/dashboard/freelancer" 
+          ? "/category-selection" 
           : "/dashboard/client";
         navigate(target);
       }

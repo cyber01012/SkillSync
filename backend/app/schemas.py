@@ -102,7 +102,7 @@ class ChallengeSubmit(BaseModel):
 
 class ChallengeResultOut(BaseModel):
     ResultID: int
-    ChallengeID: int
+    ChallengeID: str
     Score: int
     TimeTaken: int
     CompletedAt: Optional[datetime]
@@ -174,3 +174,156 @@ class MessageResponse(BaseModel):
 
 class ErrorResponse(BaseModel):
     detail: str
+
+
+# ── CATEGORIES ──
+class CategoryOut(BaseModel):
+    CategoryID: int
+    Domain: str
+    Specialty: str
+    DisplayName: str
+    IsActive: bool = True
+
+    class Config:
+        from_attributes = True
+
+
+class CategorySelectRequest(BaseModel):
+    category_id: int
+
+
+class CategoriesGroupedResponse(BaseModel):
+    domains: dict
+
+
+# ── PROFILE ──
+class ProfileUpdateRequest(BaseModel):
+    display_name: Optional[str] = None
+    headline: Optional[str] = None
+    bio: Optional[str] = Field(None, max_length=500)
+
+
+class ProfileOut(BaseModel):
+    FreelancerID: int
+    DisplayName: Optional[str]
+    Headline: Optional[str]
+    Bio: Optional[str]
+    ProfilePhotoURL: Optional[str]
+    CategoryID: Optional[int]
+    Category: Optional[str]
+    HasBaselineDNA: bool = False
+    category_display_name: Optional[str] = None
+    email: Optional[str] = None
+    challenges_completed: int = 0
+    challenges_total: int = 4
+    overall_dna: Optional[float] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProfileCompleteStatus(BaseModel):
+    is_complete: bool
+    has_category: bool
+    has_baseline_dna: bool
+    missing: List[str] = []
+
+
+# ── BASELINE (extended) ──
+class BaselineChallengeOut(BaseModel):
+    challenge_id: str
+    title: str
+    description: str
+    time_limit_minutes: int
+    starter_code: str
+    test_cases: List[dict]
+    language: str = "python"
+    difficulty: str = "beginner"
+    category: str = ""
+    all_completed: bool = False
+
+
+class BaselineStartRequest(BaseModel):
+    challenge_id: str
+
+
+class BaselineStartResponse(BaseModel):
+    session_id: str
+    challenge_id: str
+    started_at: str
+
+
+class BaselineStepRequest(BaseModel):
+    session_id: str
+    timestamp: str
+    action: str
+    content: Optional[str] = ""
+    file: Optional[str] = "main.py"
+    cursor_line: Optional[int] = 0
+    cursor_col: Optional[int] = 0
+
+
+class BaselineRunRequest(BaseModel):
+    session_id: str
+    code: str
+    file: str = "main.py"
+
+
+class BaselineRunResponse(BaseModel):
+    passed: int
+    failed: int
+    total: int
+    details: List[dict]
+    stdout: Optional[str] = ""
+    stderr: Optional[str] = ""
+
+
+class BaselineSubmitRequest(BaseModel):
+    session_id: str
+    code: str
+    duration_ms: int
+    on_time: bool = True
+    overtime_minutes: int = 0
+
+
+class BaselineSubmitResponse(BaseModel):
+    session_id: str
+    status: str
+    message: str
+
+
+# ── DNA (extended) ──
+class DNAStatusOut(BaseModel):
+    has_baseline_dna: bool
+    overall_dna: Optional[float] = None
+
+
+class DNAActivityItem(BaseModel):
+    type: str
+    title: str
+    description: str
+    timestamp: Optional[datetime] = None
+    score_change: Optional[float] = None
+
+
+# ── JOBS ──
+class JobApplyRequest(BaseModel):
+    cover_note: Optional[str] = ""
+
+
+class ApplicationOut(BaseModel):
+    ApplicationID: int
+    JobID: int
+    FreelancerID: int
+    CoverNote: Optional[str]
+    Status: str
+    AppliedAt: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+
+# ── AUTH (extended) ──
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=8)

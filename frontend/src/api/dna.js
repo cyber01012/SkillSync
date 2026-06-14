@@ -7,24 +7,24 @@ async function apiFetch(path, options = {}) {
     ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
-
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-  });
-
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (res.status === 401) {
+    localStorage.removeItem("accessToken");
+    window.location.href = "/login";
+    throw { response: { status: 401 } };
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Request failed" }));
     throw { response: { status: res.status, data: err } };
   }
-
   return res.json();
 }
 
 export const dnaApi = {
   getScores: () => apiFetch("/api/dna/scores"),
-
   getTrustScore: () => apiFetch("/api/dna/trust-score"),
-
   getSnapshots: () => apiFetch("/api/dna/snapshots"),
+  getStatus: () => apiFetch("/api/dna/status"),
+  getActivity: () => apiFetch("/api/dna/activity"),
+  getProfileWeights: () => apiFetch("/api/dna/profile-weights"),
 };

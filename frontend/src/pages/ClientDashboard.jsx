@@ -1,83 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth";
-import { Plus, Users, Briefcase } from "lucide-react";
+import { Plus, Users, Briefcase, FileText, CreditCard } from "lucide-react";
 import DashboardSidebar from "../components/common/DashboardSidebar";
 
+const PLACEHOLDERS = [
+  { title: "Post a Job", desc: "Create job listings for verified freelancers", icon: Plus },
+  { title: "My Jobs", desc: "Manage your active and closed job posts", icon: Briefcase },
+  { title: "Applicants", desc: "Review freelancer applications", icon: Users },
+  { title: "Contracts", desc: "Track active contracts and milestones", icon: FileText },
+  { title: "Payments", desc: "Manage escrow and payment events", icon: CreditCard },
+];
+
 export default function ClientDashboard() {
-  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    authApi
-      .me()
-      .then((data) => {
-        setProfile(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        navigate("/login");
-      });
-  }, [navigate]);
+    authApi.me().then(setProfile).catch(() => {
+      window.location.href = "/login";
+    }).finally(() => setLoading(false));
+  }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFF8F5] flex items-center justify-center">
-        <div className="text-[#133B6C] font-bold">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+        <p className="font-bold text-[var(--fg-primary)]">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8F5] flex">
-      <DashboardSidebar role="client" />
+    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+      <DashboardSidebar role="client" user={profile} />
 
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-black text-[#133B6C]">Client Dashboard</h1>
-            <span className="text-sm font-semibold text-[#4A6582]">
-                {profile?.Email}
-            </span>
+      <main className="flex-1 p-6 overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-black text-[var(--fg-primary)]">Client Dashboard</h1>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-[#E2D5CF] p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-[#133B6C]/10 flex items-center justify-center">
-                <Briefcase size={20} className="text-[#133B6C]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {PLACEHOLDERS.map(({ title, desc, icon: Icon }) => (
+            <div
+              key={title}
+              className="rounded-2xl border border-[var(--border)] p-6"
+              style={{ background: "var(--card)" }}
+            >
+              <div className="w-10 h-10 rounded-xl bg-[var(--ui-primary-50)] flex items-center justify-center mb-3">
+                <Icon size={20} className="text-[var(--ui-primary)]" />
               </div>
-              <span className="text-2xl font-black text-[#133B6C]">0</span>
+              <h3 className="font-bold text-[var(--fg-primary)] mb-1">{title}</h3>
+              <p className="text-sm text-[var(--fg-muted)]">{desc}</p>
+              <p className="text-xs text-[var(--color-coral)] font-semibold mt-3">Coming soon</p>
             </div>
-            <p className="text-xs text-[#8BA3BE] font-semibold">Active Jobs</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-[#E2D5CF] p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-[#FD8566]/10 flex items-center justify-center">
-                <Users size={20} className="text-[#FD8566]" />
-              </div>
-              <span className="text-2xl font-black text-[#133B6C]">0</span>
-            </div>
-            <p className="text-xs text-[#8BA3BE] font-semibold">Applications</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-[#E2D5CF] p-6 shadow-sm flex items-center justify-center">
-            <button className="flex items-center gap-2 px-6 py-3 bg-[#133B6C] text-white rounded-xl font-semibold hover:bg-[#0D2847] transition">
-              <Plus size={18} /> Post a Job
-            </button>
-          </div>
-        </div>
-
-        {/* Placeholder for Member 2 */}
-        <div className="bg-white rounded-2xl border border-[#E2D5CF] p-12 shadow-sm text-center">
-          <Briefcase size={48} className="text-[#E2D5CF] mx-auto mb-4" />
-          <h3 className="text-lg font-black text-[#133B6C] mb-2">No jobs posted yet</h3>
-          <p className="text-sm text-[#8BA3BE] mb-4">
-            Post your first job to start hiring verified freelancers.
-          </p>
-          <p className="text-xs text-[#FD8566] font-semibold">
-            Member 2 will build the job posting & matching system here.
-          </p>
+          ))}
         </div>
       </main>
     </div>

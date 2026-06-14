@@ -11,7 +11,7 @@ export default function Guide() {
     },
     {
       title: "Build Trust Score",
-      description: "As you complete projects, our Trust Score Agent automatically recalculates your score from delivery consistency, client retention, and communication metrics.",
+      description: "As you complete projects, our Trust Score Agent automatically recalculates your score from delivery consistency, client retention, and performance metrics.",
       icon: Target,
       color: "from-[#133B6C] to-[#5F90D4]",
     },

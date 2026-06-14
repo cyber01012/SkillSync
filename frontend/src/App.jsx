@@ -6,22 +6,19 @@ import SignupPage from "./pages/SignupPage";
 import FreelancerDashboard from "./pages/FreelancerDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
 import BaselineChallenge from "./pages/BaselineChallenge";
-import { authApi } from "./api/auth";
+import CategorySelection from "./pages/CategorySelection";
+import ProfileSettings from "./pages/ProfileSettings";
+import JobBrowser from "./pages/JobBrowser";
 
 function ProtectedRoute({ children, allowedRole }) {
   const token = localStorage.getItem("accessToken");
   const role = localStorage.getItem("role");
 
-  console.log("ProtectedRoute - Debug:", { token, role, allowedRole });
-
   if (!token) {
-    console.log("ProtectedRoute - No token, redirecting to /login");
     return <Navigate to="/login" replace />;
   }
-  
+
   if (allowedRole && role !== allowedRole) {
-    console.log("ProtectedRoute - Role mismatch, redirecting to dashboard");
-    // Redirect to their actual dashboard if role doesn't match the required one
     const dashboardRoute = role === "freelancer" ? "/dashboard/freelancer" : "/dashboard/client";
     return <Navigate to={dashboardRoute} replace />;
   }
@@ -29,21 +26,24 @@ function ProtectedRoute({ children, allowedRole }) {
   return children;
 }
 
-function CatchAll() {
-  console.log("CatchAll route hit, current path:", window.location.pathname);
-  return <Navigate to="/" replace />;
+function FreelancerOnboardingRoute({ children }) {
+  const token = localStorage.getItem("accessToken");
+  const role = localStorage.getItem("role");
+
+  if (!token) return <Navigate to="/login" replace />;
+  if (role !== "freelancer") return <Navigate to="/dashboard/client" replace />;
+
+  return children;
 }
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* Protected: Freelancer only */}
         <Route
           path="/dashboard/freelancer"
           element={
@@ -53,7 +53,6 @@ export default function App() {
           }
         />
 
-        {/* Protected: Client only */}
         <Route
           path="/dashboard/client"
           element={
@@ -63,18 +62,43 @@ export default function App() {
           }
         />
 
-        {/* Protected: Baseline challenge (freelancer) */}
+        <Route
+          path="/category-selection"
+          element={
+            <FreelancerOnboardingRoute>
+              <CategorySelection />
+            </FreelancerOnboardingRoute>
+          }
+        />
+
         <Route
           path="/baseline-challenge"
           element={
-            <ProtectedRoute allowedRole="freelancer">
+            <FreelancerOnboardingRoute>
               <BaselineChallenge />
+            </FreelancerOnboardingRoute>
+          }
+        />
+
+        <Route
+          path="/profile-settings"
+          element={
+            <ProtectedRoute allowedRole="freelancer">
+              <ProfileSettings />
             </ProtectedRoute>
           }
         />
 
-        {/* Catch all */}
-        <Route path="*" element={<CatchAll />} />
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute allowedRole="freelancer">
+              <JobBrowser />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

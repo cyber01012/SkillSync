@@ -15,12 +15,26 @@ class User(Base):
     CreatedAt = Column(DateTime, default=datetime.utcnow)
     IsVerified = Column(Boolean, default=False)
 
+class Category(Base):
+    __tablename__ = "Categories"
+    CategoryID = Column(Integer, primary_key=True, autoincrement=True)
+    Domain = Column(String(50), nullable=False)
+    Specialty = Column(String(50), nullable=False)
+    DisplayName = Column(String(100), nullable=False)
+    DNAProfileJSON = Column(Text, nullable=False)
+    IsActive = Column(Boolean, default=True)
+
+
 class FreelancerProfile(Base):
     __tablename__ = "FreelancerProfiles"
     FreelancerID = Column(Integer, ForeignKey("Users.UserID"), primary_key=True)
     DisplayName = Column(String(100))
     Headline = Column(String(255))
     Category = Column(String(50))
+    CategoryID = Column(Integer, ForeignKey("Categories.CategoryID"), nullable=True)
+    HasBaselineDNA = Column(Boolean, default=False)
+    Bio = Column(String(500), nullable=True)
+    ProfilePhotoURL = Column(String(500), nullable=True)
     AvailabilityStatus = Column(String(20), default="available")
 
 class ClientProfile(Base):
@@ -55,11 +69,32 @@ class ScoreComponent(Base):
     Value = Column(Float, default=50.0)
     UpdatedAt = Column(DateTime, default=datetime.utcnow)
 
+class JobPost(Base):
+    __tablename__ = "JobPosts"
+    JobID = Column(Integer, primary_key=True, autoincrement=True)
+    ClientID = Column(Integer, ForeignKey("ClientProfiles.ClientID"))
+    Title = Column(String(200), nullable=False)
+    RequiredTrustScore = Column(Integer, default=0)
+    MinSkillLevel = Column(String(20), default="beginner")
+    Status = Column(String(20), default="open")
+    CreatedAt = Column(DateTime, default=datetime.utcnow)
+
+
+class Application(Base):
+    __tablename__ = "Applications"
+    ApplicationID = Column(Integer, primary_key=True, autoincrement=True)
+    JobID = Column(Integer, ForeignKey("JobPosts.JobID"))
+    FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
+    CoverNote = Column(Text, nullable=True)
+    Status = Column(String(20), default="pending")
+    AppliedAt = Column(DateTime, default=datetime.utcnow)
+
+
 class ChallengeResult(Base):
     __tablename__ = "ChallengeResults"
     ResultID = Column(Integer, primary_key=True, autoincrement=True)
     FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
-    ChallengeID = Column(Integer)
+    ChallengeID = Column(String(50))
     Score = Column(Integer)
     TimeTaken = Column(Integer)
     CompletedAt = Column(DateTime, default=datetime.utcnow)

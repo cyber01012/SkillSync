@@ -7,6 +7,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from app.core.config import get_settings
+from baseline_challenges_data import get_baseline_challenges
 
 settings = get_settings()
 
@@ -24,8 +25,9 @@ def seed_collections():
     db = client[settings.mongodb_db]
     
     collections = [
-        'task_briefs', 'work_sessions', 'submissions', 
-        'messages', 'rubric_templates', 'behavioral_logs', 'fraud_logs'
+        'task_briefs', 'work_sessions', 'submissions',
+        'messages', 'rubric_templates', 'behavioral_logs', 'fraud_logs',
+        'baseline_challenges',
     ]
     for col in collections:
         db[col].drop()
@@ -123,7 +125,11 @@ def seed_collections():
             "flagged_at": datetime.utcnow().isoformat()
         }
     ])
-    
+
+    challenges = get_baseline_challenges()
+    db.baseline_challenges.insert_many(challenges)
+    print(f"   ✅ Seeded {len(challenges)} baseline challenges")
+
     print("\n✅ All collections seeded")
 
 
@@ -140,8 +146,10 @@ def create_indexes():
     db.behavioral_logs.create_index([("freelancer_id", ASCENDING), ("recorded_at", ASCENDING)])
     db.submissions.create_index([("contract_id", ASCENDING), ("version", ASCENDING)])
     db.task_briefs.create_index([("tags", TEXT)])
+    db.baseline_challenges.create_index([("category", ASCENDING), ("difficulty", ASCENDING)])
+    db.baseline_challenges.create_index([("challenge_id", ASCENDING)], unique=True)
     db.fraud_logs.create_index([("user_id", ASCENDING), ("flagged_at", ASCENDING)])
-    
+
     print("✅ Indexes Created")
 
 

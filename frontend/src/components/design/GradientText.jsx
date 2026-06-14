@@ -9,7 +9,7 @@ export default function GradientText({
 }) {
   return (
     <span
-      className={`inline-block text-transparent ${className}`}
+      className={`text-transparent ${className}`}
       style={{
         backgroundImage: `linear-gradient(90deg, ${colors.join(", ")})`,
         backgroundSize: "300% 100%",

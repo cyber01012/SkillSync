@@ -5,14 +5,14 @@ import { Shield, Brain, Target, FileCheck, BarChart3, Lock, ArrowRight } from "l
 const features = [
     {
         title: "AI Trust Score",
-        description: "Multi-factor weighted score replacing star ratings. Computed from delivery consistency, client retention, communication, dispute history, and challenge performance.",
+        description: "Multi-factor weighted score replacing star ratings. Computed from delivery consistency, client retention, performance, dispute history, and challenge performance.",
         icon: Shield,
         color: "text-[#133B6C]",
         bg: "bg-[#133B6C]/10",
     },
     {
         title: "Skill DNA Engine",
-        description: "Auto-generated behavioral fingerprint built from real work sessions — not self-reported. Tracks reliability, creativity, teamwork, communication, and technical accuracy.",
+        description: "Auto-generated behavioral fingerprint built from real work sessions — not self-reported. Tracks reliability, creativity, teamwork, performance, technical accuracy.",
         icon: Brain,
         color: "text-[#FD8566]",
         bg: "bg-[#FD8566]/10",

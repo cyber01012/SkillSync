@@ -30,8 +30,9 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     
     # AI APIs — optional, empty default OK
-    anthropic_api_key: str = ""
-    openai_api_key: str = ""
+   
+    gemini_api_key_1: str = ""
+    gemini_api_key_2: str = ""
     
     @property
     def sql_server_connection_string(self) -> str:

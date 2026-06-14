@@ -21,7 +21,7 @@ from app.models import (
 from app.schemas import (
     UserRegister, UserLogin, TokenResponse, UserOut, FreelancerProfileOut,
     TokenRefreshRequest, PasswordResetRequest, PasswordResetConfirm,
-    MessageResponse
+    MessageResponse, ChangePasswordRequest
 )
 from app.dependencies import get_current_user, security
 
@@ -68,7 +68,7 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
         db.flush()
 
         # Initialize Skill DNA with baseline scores (50/100 each)
-        traits = ["Reliability", "Creativity", "Teamwork", "Communication", "Deadline Adherence", "Technical Accuracy"]
+        traits = ["Reliability", "Creativity", "Teamwork", "Performance", "Deadline Adherence", "Technical Accuracy"]
         for trait in traits:
             db.add(SkillScore(FreelancerID=new_user.UserID, TraitName=trait, Score=50))
 
@@ -79,7 +79,7 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
         components = [
             ("Delivery Consistency", 0.25),
             ("Client Retention", 0.20),
-            ("Communication", 0.20),
+            ("Performance", 0.20),
             ("Dispute History", 0.15),
             ("Challenge Performance", 0.20),
         ]
@@ -287,3 +287,21 @@ def get_profile(current_user: User = Depends(get_current_user), db: Session = De
         raise HTTPException(status_code=404, detail="Profile not found")
 
     return profile
+
+
+@router.post("/change-password", response_model=MessageResponse)
+def change_password(
+    data: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Change password for authenticated user."""
+    if not verify_password(data.current_password, current_user.PasswordHash):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    current_user.PasswordHash = get_password_hash(data.new_password)
+    db.query(RefreshToken).filter(RefreshToken.UserID == current_user.UserID).update(
+        {RefreshToken.IsRevoked: True}
+    )
+    db.commit()
+    return {"message": "Password changed successfully"}

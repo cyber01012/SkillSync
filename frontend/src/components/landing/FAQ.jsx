@@ -9,7 +9,7 @@ const faqs = [
     },
     {
         question: "What is the Trust Score and how is it calculated?",
-        answer: "The Trust Score is a multi-factor weighted score (0-100) that replaces star ratings. It's computed from five factors: Delivery Consistency (25%), Client Retention (20%), Communication Quality (20%), Dispute History (15%), and Challenge Performance (20%). It cannot be gamed because it's based on actual platform behavior.",
+        answer: "The Trust Score is a multi-factor weighted score (0-100) that replaces star ratings. It's computed from five factors: Delivery Consistency (25%), Client Retention (20%), Performance Quality (20%), Dispute History (15%), and Challenge Performance (20%). It cannot be gamed because it's based on actual platform behavior.",
     },
     {
         question: "How does Proof-of-Work replay work?",

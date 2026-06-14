@@ -92,6 +92,12 @@ export const authApi = {
       body: JSON.stringify({ token, new_password }),
     }),
 
+  changePassword: ({ current_password, new_password }) =>
+    apiFetch("/api/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({ current_password, new_password }),
+    }),
+
   me: () => apiFetch("/api/auth/me"),
 
   profile: () => apiFetch("/api/auth/profile"),

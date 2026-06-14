@@ -1,45 +1,89 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authApi } from '../../api/auth';
-import { LayoutDashboard, LogOut, Lock, LogOutIcon } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  LayoutDashboard, Briefcase, FileText, FolderKanban, DollarSign, Settings,
+  Plus, Users, CreditCard, ChevronLeft, ChevronRight,
+} from "lucide-react";
+import AuthMenu from "../dashboard/AuthMenu";
 
-export default function DashboardSidebar({ role }) {
+const FREELANCER_NAV = [
+  { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard/freelancer" },
+  { label: "Browse Jobs", icon: Briefcase, path: "/jobs" },
+  { label: "My Applications", icon: FileText, path: "/applications" },
+  { label: "Active Projects", icon: FolderKanban, path: "/projects" },
+  { label: "Earnings", icon: DollarSign, path: "/earnings" },
+  { label: "Profile Settings", icon: Settings, path: "/profile-settings" },
+];
+
+const CLIENT_NAV = [
+  { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard/client" },
+  { label: "Post Job", icon: Plus, path: "/dashboard/client" },
+  { label: "My Jobs", icon: Briefcase, path: "/dashboard/client" },
+  { label: "Applicants", icon: Users, path: "/dashboard/client" },
+  { label: "Contracts", icon: FileText, path: "/dashboard/client" },
+  { label: "Payments", icon: CreditCard, path: "/dashboard/client" },
+];
+
+export default function DashboardSidebar({ role, user, collapsed, onToggle }) {
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await authApi.logout();
-    navigate('/login');
-  };
-
-  const handleLogoutAll = async () => {
-    await authApi.logoutAll();
-    navigate('/login');
-  };
+  const location = useLocation();
+  const nav = role === "client" ? CLIENT_NAV : FREELANCER_NAV;
 
   return (
-    <div className="w-64 bg-[#FFF8F5] border-r border-[#E2D5CF] min-h-screen p-6 flex flex-col justify-between">
+    <aside
+      className={`border-r border-[var(--border)] min-h-screen flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out relative ${
+        collapsed ? "w-16 p-2" : "w-64 p-4"
+      }`}
+      style={{ background: "var(--color-coral-light, #FFA88F)" }}
+    >
+      {/* Toggle Button */}
+      <button
+        type="button"
+        onClick={onToggle}
+        className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-white border border-[var(--border)] shadow-sm flex items-center justify-center hover:bg-[var(--muted)] transition-colors z-10"
+        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+      </button>
+
       <div>
-        <div className="flex items-center gap-3 mb-10">
-          <img src="/images/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
-          <span className="text-xl font-black text-[#133B6C] tracking-tighter">SkillSync</span>
+        {/* Logo */}
+        <div className={`flex items-center gap-3 mb-8 px-2 ${collapsed ? "justify-center" : ""}`}>
+          <img src="/images/logo.png" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
+          {!collapsed && (
+            <span className="text-xl font-black text-[var(--fg-primary)] tracking-tighter whitespace-nowrap">
+              SkillSync
+            </span>
+          )}
         </div>
-        <nav className="space-y-4">
-          <button onClick={() => navigate(`/dashboard/${role}`)} className="flex items-center gap-3 text-[#133B6C] font-semibold hover:text-[#FD8566] transition-colors">
-            <LayoutDashboard size={20} /> Dashboard
-          </button>
-          <button onClick={() => {/* TODO: Implement Reset Password Modal */}} className="flex items-center gap-3 text-[#133B6C] font-semibold hover:text-[#FD8566] transition-colors">
-            <Lock size={20} /> Reset Password
-          </button>
+
+        {/* Navigation */}
+        <nav className="space-y-1">
+          {nav.map(({ label, icon: Icon, path }) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => navigate(path)}
+              title={collapsed ? label : undefined}
+              className={`w-full flex items-center rounded-xl text-sm font-semibold transition-colors ${
+                collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2.5"
+              } ${
+                location.pathname === path
+                  ? "bg-[var(--ui-primary-50)] text-[var(--ui-primary)]"
+                  : "text-[var(--fg-secondary)] hover:bg-[var(--muted)] hover:text-[var(--fg-primary)]"
+              }`}
+            >
+              <Icon size={18} className="shrink-0" />
+              {!collapsed && <span className="whitespace-nowrap">{label}</span>}
+            </button>
+          ))}
         </nav>
       </div>
-      <div className="space-y-4">
-        <button onClick={handleLogout} className="flex items-center gap-3 text-[#133B6C] font-semibold hover:text-red-600 transition-colors">
-          <LogOut size={20} /> Log Out
-        </button>
-        <button onClick={handleLogoutAll} className="flex items-center gap-3 text-[#4A6582] text-sm hover:text-red-600 transition-colors">
-          <LogOutIcon size={16} /> Log out all devices
-        </button>
+
+      {/* Auth Menu */}
+      <div className={`pb-2 ${collapsed ? "px-0 flex justify-center" : "px-2"}`}>
+        <AuthMenu user={user} role={role} collapsed={collapsed} />
       </div>
-    </div>
+    </aside>
   );
 }
