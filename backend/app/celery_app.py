@@ -14,6 +14,9 @@ celery_app = Celery(
         "app.agents.ai_scorer",
         "app.agents.skill_dna_agent",
         "app.agents.matching_agent",
+        "app.agents.fraud_agent",      # NEW
+        "app.agents.payment_agent",    # NEW
+        "app.agents.trust_agent",      # NEW
     ],
 )
 

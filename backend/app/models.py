@@ -129,3 +129,66 @@ class PasswordResetToken(Base):
     ExpiresAt = Column(DateTime, nullable=False)
     IsUsed = Column(Boolean, default=False)
     CreatedAt = Column(DateTime, default=datetime.utcnow)
+
+# ── EXISTING MODELS KE BAAD YEH ADD KARO ──
+
+class Contract(Base):
+    __tablename__ = "Contracts"
+    ContractID = Column(Integer, primary_key=True, autoincrement=True)
+    JobID = Column(Integer, ForeignKey("JobPosts.JobID"))
+    FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
+    ClientID = Column(Integer, ForeignKey("ClientProfiles.ClientID"))
+    TotalAmount = Column(Float, default=0.0)
+    Status = Column(String(20), default="active")
+    CreatedAt = Column(DateTime, default=datetime.utcnow)
+
+
+class Milestone(Base):
+    __tablename__ = "Milestones"
+    MilestoneID = Column(Integer, primary_key=True, autoincrement=True)
+    ContractID = Column(Integer, ForeignKey("Contracts.ContractID"))
+    Title = Column(String(200))
+    Amount = Column(Float, default=0.0)
+    DueDate = Column(DateTime)
+    Status = Column(String(20), default="pending")
+    ApprovedAt = Column(DateTime)
+
+
+class PaymentEvent(Base):
+    __tablename__ = "PaymentEvents"
+    EventID = Column(Integer, primary_key=True, autoincrement=True)
+    ContractID = Column(Integer, ForeignKey("Contracts.ContractID"))
+    Amount = Column(Float)
+    EventType = Column(String(50))
+    ProcessedAt = Column(DateTime, default=datetime.utcnow)
+    EscrowBalance = Column(Float, default=0.0)
+
+
+class DisputeRecord(Base):
+    __tablename__ = "DisputeRecords"
+    DisputeID = Column(Integer, primary_key=True, autoincrement=True)
+    ContractID = Column(Integer, ForeignKey("Contracts.ContractID"))
+    RaisedBy = Column(Integer, ForeignKey("Users.UserID"))
+    Description = Column(Text)
+    Status = Column(String(20), default="open")
+    ResolvedAt = Column(DateTime)
+
+
+class FlaggedAccounts(Base):
+    __tablename__ = "FlaggedAccounts"
+    FlagID = Column(Integer, primary_key=True, autoincrement=True)
+    UserID = Column(Integer, ForeignKey("Users.UserID"))
+    FlagType = Column(String(50))
+    Severity = Column(String(20), default="low")
+    DetectedAt = Column(DateTime, default=datetime.utcnow)
+    Status = Column(String(20), default="pending")
+
+
+class ScoreHistory(Base):
+    __tablename__ = "ScoreHistory"
+    HistoryID = Column(Integer, primary_key=True, autoincrement=True)
+    FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
+    OldScore = Column(Float)
+    NewScore = Column(Float)
+    ChangedAt = Column(DateTime, default=datetime.utcnow)
+    Reason = Column(String(255))

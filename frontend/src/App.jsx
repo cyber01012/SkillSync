@@ -12,6 +12,9 @@ import JobBrowser from "./pages/JobBrowser";
 import PostJob from "./pages/PostJob";
 import JobDetail from "./pages/JobDetail";
 import MyApplications from "./pages/MyApplications";
+import Contracts from "./pages/Contracts";
+import ContractDetail from "./pages/ContractDetail";
+
 
 function ProtectedRoute({ children, allowedRole }) {
   const token = localStorage.getItem("accessToken");
@@ -127,6 +130,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/contracts" element={<ProtectedRoute><Contracts /></ProtectedRoute>} />
+        <Route path="/contracts/:contractId" element={<ProtectedRoute><ContractDetail /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

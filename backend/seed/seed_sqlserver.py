@@ -330,6 +330,52 @@ def run_dml():
     (5, 'BL-RT-001', 92, 600), (5, 'BL-RT-002', 88, 480),
     (6, 'BL-PY-001', 95, 450), (6, 'BL-PY-002', 90, 510);
 
+    -- ── MEMBER 3: Sample Contracts ──
+    INSERT INTO Contracts (JobID, FreelancerID, ClientID, TotalAmount, Status) VALUES
+    (1, 4, 2, 5000.0, 'active'),
+    (2, 6, 2, 8000.0, 'active'),
+    (3, 5, 3, 3000.0, 'completed');
+
+    -- ── MEMBER 3: Sample Milestones ──
+    INSERT INTO Milestones (ContractID, Title, Amount, DueDate, Status, ApprovedAt) VALUES
+    (1, 'Project Setup & Architecture', 1000.0, '2026-06-20', 'approved', GETDATE()),
+    (1, 'Frontend Development', 2000.0, '2026-06-30', 'pending', NULL),
+    (1, 'Backend API Development', 1500.0, '2026-07-10', 'pending', NULL),
+    (1, 'Testing & Deployment', 500.0, '2026-07-15', 'pending', NULL),
+    (2, 'API Integration Setup', 2000.0, '2026-07-01', 'approved', GETDATE()),
+    (2, 'Chatbot Logic Implementation', 3000.0, '2026-07-15', 'pending', NULL),
+    (2, 'Testing & Documentation', 3000.0, '2026-07-30', 'pending', NULL),
+    (3, 'Logo Design', 1000.0, '2026-05-15', 'approved', GETDATE()),
+    (3, 'Brand Guidelines', 1000.0, '2026-05-20', 'approved', GETDATE()),
+    (3, 'Final Delivery', 1000.0, '2026-05-25', 'approved', GETDATE());
+
+    -- ── MEMBER 3: Sample Payment Events ──
+    INSERT INTO PaymentEvents (ContractID, Amount, EventType, EscrowBalance) VALUES
+    (1, 5000.0, 'escrow_deposit', 5000.0),
+    (1, 1000.0, 'payment_released', 4000.0),
+    (2, 8000.0, 'escrow_deposit', 8000.0),
+    (2, 2000.0, 'payment_released', 6000.0),
+    (3, 3000.0, 'escrow_deposit', 3000.0),
+    (3, 1000.0, 'payment_released', 2000.0),
+    (3, 1000.0, 'payment_released', 1000.0),
+    (3, 1000.0, 'payment_released', 0.0);
+
+    -- ── MEMBER 3: Sample Disputes ──
+    INSERT INTO DisputeRecords (ContractID, RaisedBy, Description, Status) VALUES
+    (1, 4, 'Client requested additional features not in original scope', 'open');
+
+    -- ── MEMBER 4: Sample Score History ──
+    INSERT INTO ScoreHistory (FreelancerID, OldScore, NewScore, Reason) VALUES
+    (4, 70.0, 76.5, 'Contract 3 completed — auto-recalculation'),
+    (5, 75.0, 80.0, 'Contract 3 completed — auto-recalculation'),
+    (6, 72.0, 78.3, 'Contract 2 milestone approved — auto-recalculation');
+
+    -- ── MEMBER 3: Sample Applications (accepted) ──
+    INSERT INTO Applications (JobID, FreelancerID, CoverNote, Status) VALUES
+    (1, 4, 'I have 5 years of experience with React and FastAPI', 'accepted'),
+    (2, 6, 'Expert in Python AI integrations and chatbot development', 'accepted'),
+    (3, 5, 'Creative designer with strong portfolio in brand identity', 'accepted');
+
     COMMIT;
     """
 
@@ -347,7 +393,7 @@ def run_dml():
             "dna_mern": '{"traits":["technical","creativity","reliability","performance","speed","deadline"],"weights":[0.28,0.18,0.22,0.12,0.10,0.10],"labels":{"technical":"Technical Accuracy","creativity":"Creativity","reliability":"Reliability","performance":"Performance","speed":"Speed","deadline":"Deadline"}}',
         })
 
-    print("✅ DML + TCL Complete")
+    print("✅ DML + TCL Complete (with Member 3 & 4 sample data)")
 
 
 def create_views():
@@ -395,10 +441,45 @@ def create_views():
             (SELECT COUNT(*) FROM ChallengeResults cr WHERE cr.FreelancerID = fs.UserID) AS TotalChallenges
         FROM vw_freelancer_summary fs
         WHERE fs.TrustScore >= 75;
+        """,
+        # ── MEMBER 4: Platform KPIs View ──
+        """
+        CREATE VIEW vw_platform_kpis AS
+        SELECT 
+            (SELECT COUNT(*) FROM Users) AS total_users,
+            (SELECT COUNT(*) FROM Users WHERE Role = 'freelancer') AS total_freelancers,
+            (SELECT COUNT(*) FROM Users WHERE Role = 'client') AS total_clients,
+            (SELECT COUNT(*) FROM JobPosts) AS total_jobs,
+            (SELECT COUNT(*) FROM Contracts) AS total_contracts,
+            (SELECT ISNULL(SUM(Amount), 0) FROM PaymentEvents WHERE EventType = 'payment_released') AS total_revenue,
+            (SELECT ISNULL(AVG(OverallScore), 0) FROM TrustScores) AS avg_trust_score,
+            (SELECT ISNULL(AVG(CAST(RequiredTrustScore AS FLOAT)), 0) FROM JobPosts) AS avg_required_trust;
+        """,
+        # ── MEMBER 3: Contract Summary View ──
+        """
+        CREATE VIEW vw_contract_summary AS
+        SELECT 
+            c.ContractID, c.JobID, c.FreelancerID, c.ClientID,
+            c.TotalAmount, c.Status AS ContractStatus,
+            j.Title AS JobTitle,
+            fp.DisplayName AS FreelancerName,
+            cp.CompanyName AS ClientCompany,
+            COUNT(m.MilestoneID) AS TotalMilestones,
+            SUM(CASE WHEN m.Status = 'approved' THEN 1 ELSE 0 END) AS ApprovedMilestones,
+            SUM(CASE WHEN m.Status = 'pending' THEN 1 ELSE 0 END) AS PendingMilestones
+        FROM Contracts c
+        JOIN JobPosts j ON c.JobID = j.JobID
+        JOIN FreelancerProfiles fp ON c.FreelancerID = fp.FreelancerID
+        JOIN ClientProfiles cp ON c.ClientID = cp.ClientID
+        LEFT JOIN Milestones m ON c.ContractID = m.ContractID
+        GROUP BY c.ContractID, c.JobID, c.FreelancerID, c.ClientID,
+                 c.TotalAmount, c.Status, j.Title, fp.DisplayName, cp.CompanyName;
         """
     ]
 
     with engine.begin() as conn:
+        conn.execute(text("DROP VIEW IF EXISTS vw_contract_summary;"))
+        conn.execute(text("DROP VIEW IF EXISTS vw_platform_kpis;"))
         conn.execute(text("DROP VIEW IF EXISTS vw_top_freelancers;"))
         conn.execute(text("DROP VIEW IF EXISTS vw_freelancer_summary;"))
         conn.execute(text("DROP VIEW IF EXISTS vw_client_summary;"))
@@ -406,7 +487,7 @@ def create_views():
         for view in views:
             conn.execute(text(view))
 
-    print("✅ Views Created")
+    print("✅ Views Created (including Member 3 & 4 views)")
 
 
 def create_stored_procedures():
@@ -467,10 +548,51 @@ def create_stored_procedures():
             WHERE RequiredTrustScore <= @TrustScore
             ORDER BY CreatedAt DESC;
         END;
+        """,
+        # ── MEMBER 3: Fraud Detection Stored Procedure ──
+        """
+        CREATE PROCEDURE sp_flag_submission
+            @SubmissionID NVARCHAR(50),
+            @FreelancerID INT,
+            @ConfidenceScore FLOAT,
+            @FlagType NVARCHAR(50)
+        AS
+        BEGIN
+            INSERT INTO FlaggedAccounts (UserID, FlagType, Severity, DetectedAt, Status)
+            VALUES (
+                @FreelancerID,
+                @FlagType,
+                CASE WHEN @ConfidenceScore > 0.85 THEN 'high' ELSE 'medium' END,
+                GETDATE(),
+                'pending'
+            );
+            
+            SELECT @@IDENTITY AS FlagID;
+        END;
+        """,
+        # ── MEMBER 4: Escrow Balance Stored Procedure ──
+        """
+        CREATE PROCEDURE sp_get_escrow_balance
+            @ContractID INT
+        AS
+        BEGIN
+            SELECT 
+                c.TotalAmount,
+                ISNULL(SUM(CASE WHEN pe.EventType = 'escrow_deposit' THEN pe.Amount ELSE 0 END), 0) AS TotalDeposited,
+                ISNULL(SUM(CASE WHEN pe.EventType = 'payment_released' THEN pe.Amount ELSE 0 END), 0) AS TotalReleased,
+                ISNULL(SUM(CASE WHEN pe.EventType = 'escrow_deposit' THEN pe.Amount ELSE 0 END), 0) - 
+                ISNULL(SUM(CASE WHEN pe.EventType = 'payment_released' THEN pe.Amount ELSE 0 END), 0) AS EscrowBalance
+            FROM Contracts c
+            LEFT JOIN PaymentEvents pe ON c.ContractID = pe.ContractID
+            WHERE c.ContractID = @ContractID
+            GROUP BY c.ContractID, c.TotalAmount;
+        END;
         """
     ]
 
     with engine.begin() as conn:
+        conn.execute(text("DROP PROCEDURE IF EXISTS sp_get_escrow_balance;"))
+        conn.execute(text("DROP PROCEDURE IF EXISTS sp_flag_submission;"))
         conn.execute(text("DROP PROCEDURE IF EXISTS sp_get_user_by_email;"))
         conn.execute(text("DROP PROCEDURE IF EXISTS sp_get_user_by_username;"))
         conn.execute(text("DROP PROCEDURE IF EXISTS sp_get_freelancer_dna;"))
@@ -479,7 +601,7 @@ def create_stored_procedures():
         for proc in procedures:
             conn.execute(text(proc))
 
-    print("✅ Stored Procedures Created")
+    print("✅ Stored Procedures Created (including Member 3 & 4 procedures)")
 
 
 def create_functions():
@@ -511,16 +633,35 @@ def create_functions():
             WHERE OverallScore > (SELECT OverallScore FROM TrustScores WHERE FreelancerID = @FreelancerID);
             RETURN @rank;
         END;
+        """,
+        # ── MEMBER 4: Calculate Completion Rate Function ──
+        """
+        CREATE FUNCTION fn_contract_completion_rate(@FreelancerID INT)
+        RETURNS FLOAT
+        AS
+        BEGIN
+            DECLARE @total INT;
+            DECLARE @completed INT;
+            
+            SELECT @total = COUNT(*) FROM Contracts WHERE FreelancerID = @FreelancerID;
+            SELECT @completed = COUNT(*) FROM Contracts WHERE FreelancerID = @FreelancerID AND Status = 'completed';
+            
+            IF @total = 0
+                RETURN 0.0;
+            
+            RETURN CAST(@completed AS FLOAT) / CAST(@total AS FLOAT) * 100.0;
+        END;
         """
     ]
 
     with engine.begin() as conn:
+        conn.execute(text("DROP FUNCTION IF EXISTS fn_contract_completion_rate;"))
         conn.execute(text("DROP FUNCTION IF EXISTS fn_avg_trust_score;"))
         conn.execute(text("DROP FUNCTION IF EXISTS fn_freelancer_rank;"))
         for func in functions:
             conn.execute(text(func))
 
-    print("✅ Functions Created")
+    print("✅ Functions Created (including Member 4 function)")
 
 
 def create_triggers():
@@ -556,16 +697,44 @@ def create_triggers():
             SET AvailabilityStatus = 'busy'
             WHERE FreelancerID IN (SELECT FreelancerID FROM inserted);
         END;
+        """,
+        # ── MEMBER 4: Payment Event Trigger ──
+        """
+        CREATE TRIGGER trg_log_payment_event
+        ON PaymentEvents
+        AFTER INSERT
+        AS
+        BEGIN
+            -- Update contract status if all milestones paid
+            UPDATE Contracts
+            SET Status = 'completed'
+            WHERE ContractID IN (
+                SELECT i.ContractID 
+                FROM inserted i
+                WHERE i.EventType = 'payment_released'
+                AND i.ContractID IN (
+                    SELECT c.ContractID 
+                    FROM Contracts c
+                    WHERE c.Status = 'active'
+                    AND NOT EXISTS (
+                        SELECT 1 FROM Milestones m 
+                        WHERE m.ContractID = c.ContractID 
+                        AND m.Status != 'approved'
+                    )
+                )
+            );
+        END;
         """
     ]
 
     with engine.begin() as conn:
+        conn.execute(text("DROP TRIGGER IF EXISTS trg_log_payment_event;"))
         conn.execute(text("DROP TRIGGER IF EXISTS trg_log_score_change;"))
         conn.execute(text("DROP TRIGGER IF EXISTS trg_update_availability;"))
         for trig in triggers:
             conn.execute(text(trig))
 
-    print("✅ Triggers Created")
+    print("✅ Triggers Created (including Member 4 trigger)")
 
 
 def verify_data():
@@ -589,6 +758,35 @@ def verify_data():
         result = conn.execute(text("SELECT AVG(OverallScore) as AvgTrust FROM TrustScores"))
         avg = result.fetchone()[0]
         print(f"\nAverage Trust Score: {avg:.2f}")
+
+        # ── MEMBER 3 & 4: Verify new data ──
+        result = conn.execute(text("SELECT COUNT(*) as Contracts FROM Contracts"))
+        contracts_count = result.fetchone()[0]
+        print(f"\n📊 Contracts: {contracts_count}")
+
+        result = conn.execute(text("SELECT COUNT(*) as Milestones FROM Milestones"))
+        milestones_count = result.fetchone()[0]
+        print(f"📊 Milestones: {milestones_count}")
+
+        result = conn.execute(text("SELECT COUNT(*) as Payments FROM PaymentEvents"))
+        payments_count = result.fetchone()[0]
+        print(f"📊 Payment Events: {payments_count}")
+
+        result = conn.execute(text("SELECT COUNT(*) as Disputes FROM DisputeRecords"))
+        disputes_count = result.fetchone()[0]
+        print(f"📊 Disputes: {disputes_count}")
+
+        result = conn.execute(text("SELECT COUNT(*) as Views FROM sys.views WHERE name LIKE 'vw_%'"))
+        views_count = result.fetchone()[0]
+        print(f"\n📊 Views Created: {views_count}")
+
+        result = conn.execute(text("SELECT COUNT(*) as Procs FROM sys.procedures WHERE name LIKE 'sp_%'"))
+        procs_count = result.fetchone()[0]
+        print(f"📊 Stored Procedures: {procs_count}")
+
+        result = conn.execute(text("SELECT COUNT(*) as Triggers FROM sys.triggers"))
+        triggers_count = result.fetchone()[0]
+        print(f"📊 Triggers: {triggers_count}")
 
 
 def seed_all():

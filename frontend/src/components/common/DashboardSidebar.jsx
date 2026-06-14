@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Briefcase, FileText, FolderKanban, DollarSign, Settings,
-  Plus, Users, CreditCard, ChevronLeft, ChevronRight,
+  Plus, Users, CreditCard, ChevronLeft, ChevronRight, Shield, BarChart3,
 } from "lucide-react";
 import AuthMenu from "../dashboard/AuthMenu";
 
@@ -10,7 +10,8 @@ const FREELANCER_NAV = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard/freelancer" },
   { label: "Browse Jobs", icon: Briefcase, path: "/jobs" },
   { label: "My Applications", icon: FileText, path: "/applications" },
-  { label: "Active Projects", icon: FolderKanban, path: "/projects" },
+  { label: "Contracts", icon: Shield, path: "/contracts" },           // NEW — Member 3
+  { label: "Active Projects", icon: FolderKanban, path: "/contracts" }, // NEW — Member 3 (VPO)
   { label: "Earnings", icon: DollarSign, path: "/earnings" },
   { label: "Profile Settings", icon: Settings, path: "/profile-settings" },
 ];
@@ -20,14 +21,17 @@ const CLIENT_NAV = [
   { label: "Post Job", icon: Plus, path: "/post-job" },
   { label: "My Jobs", icon: Briefcase, path: "/dashboard/client" },
   { label: "Applicants", icon: Users, path: "/dashboard/client" },
-  { label: "Contracts", icon: FileText, path: "/dashboard/client" },
+  { label: "Contracts", icon: Shield, path: "/contracts" },           // NEW — Member 3
   { label: "Payments", icon: CreditCard, path: "/dashboard/client" },
+  { label: "Analytics", icon: BarChart3, path: "/analytics" },         // NEW — Member 4
 ];
 
 function isNavActive(pathname, path) {
   if (path === "/jobs") return pathname === "/jobs" || /^\/jobs\/\d+$/.test(pathname);
   if (path === "/applications") return pathname === "/applications";
   if (path === "/post-job") return pathname === "/post-job";
+  if (path === "/contracts") return pathname === "/contracts" || /^\/contracts\/\d+$/.test(pathname); // NEW
+  if (path === "/analytics") return pathname === "/analytics"; // NEW
   return pathname === path;
 }
 

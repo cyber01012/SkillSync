@@ -407,3 +407,246 @@ class ClientProfileOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ═══════════════════════════════════════════════════════════════
+# MEMBER 3 — CONTRACTS + VPO + FRAUD
+# ═══════════════════════════════════════════════════════════════
+
+# ── CONTRACTS ──
+class ContractCreate(BaseModel):
+    job_id: int
+    freelancer_id: int
+    total_amount: float = Field(..., gt=0)
+    milestones: Optional[List[dict]] = []
+
+
+class ContractOut(BaseModel):
+    ContractID: int
+    JobID: int
+    FreelancerID: int
+    ClientID: int
+    TotalAmount: float
+    Status: str
+    CreatedAt: Optional[datetime]
+    job_title: Optional[str] = None
+    freelancer_name: Optional[str] = None
+    client_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class MilestoneCreate(BaseModel):
+    title: str = Field(..., min_length=3, max_length=200)
+    amount: float = Field(..., gt=0)
+    due_date: Optional[str] = None
+
+
+class MilestoneOut(BaseModel):
+    MilestoneID: int
+    ContractID: int
+    Title: str
+    Amount: float
+    DueDate: Optional[datetime]
+    Status: str
+    ApprovedAt: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+
+class MilestoneApproveRequest(BaseModel):
+    milestone_id: int
+
+
+class EscrowStatusOut(BaseModel):
+    contract_id: int
+    total_amount: float
+    escrow_balance: float
+    milestones_total: float
+    released_amount: float
+    pending_amount: float
+
+
+class PaymentEventOut(BaseModel):
+    EventID: int
+    ContractID: int
+    Amount: float
+    EventType: str
+    ProcessedAt: Optional[datetime]
+    EscrowBalance: float
+
+    class Config:
+        from_attributes = True
+
+
+# ── VPO / PROJECT OFFICE ──
+class TaskCreate(BaseModel):
+    title: str = Field(..., min_length=3, max_length=200)
+    description: Optional[str] = ""
+    status: str = "todo"
+    assignee_id: Optional[int] = None
+    due_date: Optional[str] = None
+
+
+class TaskOut(BaseModel):
+    task_id: str
+    contract_id: int
+    title: str
+    description: str
+    status: str
+    assignee_id: Optional[int]
+    created_at: str
+    due_date: Optional[str]
+
+
+class MessageSend(BaseModel):
+    contract_id: int
+    body: str = Field(..., min_length=1)
+    attachments: Optional[List[str]] = []
+
+
+class MessageOut(BaseModel):
+    msg_id: str
+    contract_id: int
+    sender_id: int
+    sender_name: str
+    sender_role: str
+    body: str
+    attachments: List[str]
+    sent_at: str
+    read_by: List[int]
+
+
+class SubmissionCreate(BaseModel):
+    contract_id: int
+    milestone_id: Optional[int] = None
+    text_content: str = ""
+    files: Optional[List[dict]] = []
+
+
+class SubmissionOut(BaseModel):
+    submission_id: str
+    contract_id: int
+    milestone_id: Optional[int]
+    freelancer_id: int
+    version: int
+    files: List[dict]
+    text_content: str
+    submitted_at: str
+    ai_score: Optional[float] = None
+    fraud_flags: Optional[List[dict]] = []
+
+
+class FraudFlagOut(BaseModel):
+    flag_id: str
+    submission_id: str
+    detection_type: str
+    confidence_score: float
+    evidence: dict
+    flagged_at: str
+    status: str
+
+
+# ── FRAUD DETECTION ──
+class FraudDetectionResult(BaseModel):
+    submission_id: str
+    is_flagged: bool
+    confidence_score: float
+    detection_type: str
+    evidence: dict
+    recommendation: str
+
+
+# ── DISPUTES ──
+class DisputeCreate(BaseModel):
+    contract_id: int
+    description: str = Field(..., min_length=10)
+    raised_by: int
+
+
+class DisputeOut(BaseModel):
+    DisputeID: int
+    ContractID: int
+    RaisedBy: int
+    Description: str
+    Status: str
+    ResolvedAt: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+
+# ═══════════════════════════════════════════════════════════════
+# MEMBER 4 — PAYMENTS + TRUST SCORE + ANALYTICS
+# ═══════════════════════════════════════════════════════════════
+
+# ── TRUST SCORE ──
+class TrustScoreHistoryOut(BaseModel):
+    HistoryID: int
+    FreelancerID: int
+    OldScore: float
+    NewScore: float
+    ChangedAt: Optional[datetime]
+    Reason: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+
+class TrustScoreUpdateRequest(BaseModel):
+    freelancer_id: int
+    new_score: float = Field(..., ge=0, le=100)
+    reason: Optional[str] = "Manual update"
+
+
+# ── ANALYTICS ──
+class PlatformKPIsOut(BaseModel):
+    total_users: int
+    total_freelancers: int
+    total_clients: int
+    total_jobs: int
+    total_contracts: int
+    total_revenue: float
+    avg_trust_score: float
+    completion_rate: float
+    top_freelancers: List[dict]
+    recent_payments: List[dict]
+    monthly_growth: List[dict]
+
+
+class FreelancerRankingOut(BaseModel):
+    rank: int
+    freelancer_id: int
+    display_name: str
+    trust_score: float
+    completed_contracts: int
+    total_earnings: float
+    category: Optional[str]
+
+
+class JobAnalyticsOut(BaseModel):
+    job_id: int
+    title: str
+    total_applications: int
+    avg_trust_score: float
+    top_matches: int
+    status: str
+
+
+# ── PAYMENTS ──
+class PaymentReleaseRequest(BaseModel):
+    milestone_id: int
+    contract_id: int
+
+
+class PaymentStatusOut(BaseModel):
+    payment_id: str
+    milestone_id: int
+    contract_id: int
+    amount: float
+    status: str
+    released_at: Optional[str]
+    released_by: Optional[int]
+    transaction_hash: Optional[str]
