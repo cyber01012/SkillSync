@@ -9,6 +9,9 @@ import BaselineChallenge from "./pages/BaselineChallenge";
 import CategorySelection from "./pages/CategorySelection";
 import ProfileSettings from "./pages/ProfileSettings";
 import JobBrowser from "./pages/JobBrowser";
+import PostJob from "./pages/PostJob";
+import JobDetail from "./pages/JobDetail";
+import MyApplications from "./pages/MyApplications";
 
 function ProtectedRoute({ children, allowedRole }) {
   const token = localStorage.getItem("accessToken");
@@ -94,6 +97,33 @@ export default function App() {
           element={
             <ProtectedRoute allowedRole="freelancer">
               <JobBrowser />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/post-job"
+          element={
+            <ProtectedRoute allowedRole="client">
+              <PostJob />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/jobs/:jobId"
+          element={
+            <ProtectedRoute>
+              <JobDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute allowedRole="freelancer">
+              <MyApplications />
             </ProtectedRoute>
           }
         />

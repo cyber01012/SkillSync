@@ -134,9 +134,15 @@ class ScoreComponentOut(BaseModel):
 
 # ── JOB ──
 class JobPostCreate(BaseModel):
-    title: str = Field(..., min_length=5)
+    title: str = Field(..., min_length=5, max_length=200)
+    description: str = Field(..., min_length=20)
     required_trust_score: int = Field(default=0, ge=0, le=100)
     min_skill_level: str = "beginner"
+    required_tools: Optional[List[str]] = []
+    tags: Optional[List[str]] = []
+    budget_min: Optional[int] = None
+    budget_max: Optional[int] = None
+    deadline: Optional[str] = None
 
 
 class JobPostOut(BaseModel):
@@ -327,3 +333,77 @@ class ApplicationOut(BaseModel):
 class ChangePasswordRequest(BaseModel):
     current_password: str
     new_password: str = Field(..., min_length=8)
+
+
+# ── JOB POSTING (Member 2) ──
+class JobPostDetailOut(BaseModel):
+    JobID: int
+    ClientID: int
+    Title: str
+    RequiredTrustScore: int
+    MinSkillLevel: str
+    Status: str
+    CreatedAt: Optional[datetime]
+    description: Optional[str] = None
+    required_tools: Optional[List[str]] = []
+    tags: Optional[List[str]] = []
+    budget_range: Optional[dict] = None
+    client_name: Optional[str] = None
+    client_company: Optional[str] = None
+    application_count: int = 0
+    has_applied: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class JobWithApplicationsOut(BaseModel):
+    JobID: int
+    ClientID: int
+    Title: str
+    RequiredTrustScore: int
+    MinSkillLevel: str
+    Status: str
+    CreatedAt: Optional[datetime]
+    applications: List[ApplicationOut] = []
+
+    class Config:
+        from_attributes = True
+
+
+# ── MATCHING (Member 2) ──
+class FreelancerMatchOut(BaseModel):
+    freelancer_id: int
+    display_name: str
+    headline: Optional[str]
+    category: Optional[str]
+    trust_score: float
+    match_score: float
+    has_baseline_dna: bool
+    overall_dna: Optional[float] = None
+
+
+class MatchResultsOut(BaseModel):
+    job_id: int
+    total_matches: int
+    matches: List[FreelancerMatchOut]
+
+
+# ── APPLICATION STATUS UPDATE (Member 2) ──
+class ApplicationStatusUpdate(BaseModel):
+    status: str = Field(..., pattern="^(accepted|rejected|pending)$")
+
+
+# ── CLIENT PROFILE (Member 2) ──
+class ClientProfileOut(BaseModel):
+    ClientID: int
+    CompanyName: Optional[str]
+    IndustryID: Optional[int]
+    IsVerified: bool
+    TrustLevel: str
+    email: Optional[str] = None
+    total_jobs_posted: int = 0
+    total_applications_received: int = 0
+
+    class Config:
+        from_attributes = True

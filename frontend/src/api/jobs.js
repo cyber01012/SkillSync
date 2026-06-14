@@ -29,4 +29,19 @@ export const jobsApi = {
       body: JSON.stringify({ cover_note }),
     }),
   myApplications: () => apiFetch("/api/jobs/applications/mine"),
+  create: (data) =>
+    apiFetch("/api/jobs", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  myPosted: () => apiFetch("/api/jobs/my/posted"),
+  close: (jobId) =>
+    apiFetch(`/api/jobs/${jobId}/close`, { method: "PUT" }),
+  getApplicants: (jobId) => apiFetch(`/api/jobs/${jobId}/applications`),
+  updateApplicationStatus: (appId, status) =>
+    apiFetch(`/api/jobs/applications/${appId}/status`, {
+      method: "PUT",
+      body: JSON.stringify({ status }),
+    }),
+  getMatches: (jobId) => apiFetch(`/api/jobs/${jobId}/matches`),
 };

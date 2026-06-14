@@ -64,6 +64,8 @@ def call_gemini(code: str, prompt_template: str, session_id: str) -> dict:
 
 @celery_app.task(bind=True, max_retries=3)
 def ai_scorer_task(self, session_id: str, code: str, prompt_template: str):
+    from datetime import datetime
+
     from app.core.database import get_mongo_client
     from app.core.config import get_settings as gs
 
@@ -75,20 +77,28 @@ def ai_scorer_task(self, session_id: str, code: str, prompt_template: str):
 
     db.work_sessions.update_one(
         {"session_id": session_id},
-        {"$set": {"ai_score": scores, "ai_scored_at": __import__("datetime").datetime.utcnow().isoformat()}},
+        {"$set": {
+            "ai_score": scores,
+            "ai_scored_at": datetime.utcnow().isoformat(),
+        }},
     )
 
-    from app.agents.skill_dna_agent import skill_dna_agent_task
-    skill_dna_agent_task.delay(session_id)
+    try:
+        from app.agents.skill_dna_agent import skill_dna_agent_task
+        skill_dna_agent_task.delay(session_id)
+    except Exception:
+        from app.agents.skill_dna_agent import run_skill_dna_sync
+        run_skill_dna_sync(session_id)
 
     return scores
 
 
 def run_ai_scorer_sync(session_id: str, code: str, prompt_template: str) -> dict:
     """Synchronous fallback when Celery is unavailable."""
+    from datetime import datetime
+
     from app.core.database import get_mongo_client
     from app.core.config import get_settings as gs
-    from datetime import datetime
 
     settings = gs()
     client = get_mongo_client()
@@ -97,7 +107,10 @@ def run_ai_scorer_sync(session_id: str, code: str, prompt_template: str) -> dict
     scores = call_gemini(code, prompt_template, session_id)
     db.work_sessions.update_one(
         {"session_id": session_id},
-        {"$set": {"ai_score": scores, "ai_scored_at": datetime.utcnow().isoformat()}},
+        {"$set": {
+            "ai_score": scores,
+            "ai_scored_at": datetime.utcnow().isoformat(),
+        }},
     )
 
     from app.agents.skill_dna_agent import run_skill_dna_sync

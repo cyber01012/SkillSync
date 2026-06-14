@@ -41,11 +41,14 @@ export default function FreelancerDashboard() {
     setError(null);
     try {
       const status = await profileApi.getStatus();
+      console.log("Profile status:", status);
+      
       if (!status.has_category) {
         navigate("/category-selection");
         return;
       }
       if (!status.has_baseline_dna) {
+        console.log("No baseline DNA, redirecting to challenge");
         navigate("/baseline-challenge");
         return;
       }
@@ -57,14 +60,15 @@ export default function FreelancerDashboard() {
         dnaApi.getActivity(),
         dnaApi.getProfileWeights(),
       ]);
+      console.log("Profile loaded:", prof);
       setProfile(prof);
       setScores(dnaScores);
       setSnapshots(snaps);
       setActivity(act);
       setWeights(w.weights || {});
     } catch (err) {
+      console.error("Dashboard error:", err);
       setError("Failed to load dashboard");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -126,22 +130,23 @@ export default function FreelancerDashboard() {
       />
 
       <main className="relative z-10 flex-1 p-6 overflow-y-auto transition-all duration-300 ease-in-out">
-      {/* Header */}
-<div className="flex items-start justify-between mb-10 max-w-7xl">
-  <div className="pt-1">
-    <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-none">
-      <GradientText animationSpeed={5} className="font-italic">
-        {greeting}
-      </GradientText>
-    </h1>
-    <p className="text-xl md:text-4xl font-bold italic text-[var(--fg-secondary)] mt-3">
-      <span className="text-[var(--color-coral)] font-black">{profile?.DisplayName?.split(' ')[0]}</span>
-    </p>
-  </div>
-  <div className="pt-2">
-    <AuthMenu user={profile} role="freelancer" />
-  </div>
-</div>
+        {/* Header */}
+        <div className="flex items-start justify-between mb-10 max-w-7xl">
+          <div className="pt-1">
+            <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-none">
+              <GradientText animationSpeed={5} className="font-italic">
+                {greeting}
+              </GradientText>
+            </h1>
+            <p className="text-xl md:text-4xl font-bold italic text-[var(--fg-secondary)] mt-3">
+              <span className="text-[var(--color-coral)] font-black">{profile?.DisplayName?.split(' ')[0]}</span>
+            </p>
+          </div>
+          <div className="pt-2">
+            <AuthMenu user={profile} role="freelancer" />
+          </div>
+        </div>
+
         <div className="space-y-8 max-w-7xl">
           {/* Profile Card - Full Width */}
           <ProfileCard

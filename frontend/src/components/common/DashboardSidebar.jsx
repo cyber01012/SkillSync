@@ -17,12 +17,19 @@ const FREELANCER_NAV = [
 
 const CLIENT_NAV = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard/client" },
-  { label: "Post Job", icon: Plus, path: "/dashboard/client" },
+  { label: "Post Job", icon: Plus, path: "/post-job" },
   { label: "My Jobs", icon: Briefcase, path: "/dashboard/client" },
   { label: "Applicants", icon: Users, path: "/dashboard/client" },
   { label: "Contracts", icon: FileText, path: "/dashboard/client" },
   { label: "Payments", icon: CreditCard, path: "/dashboard/client" },
 ];
+
+function isNavActive(pathname, path) {
+  if (path === "/jobs") return pathname === "/jobs" || /^\/jobs\/\d+$/.test(pathname);
+  if (path === "/applications") return pathname === "/applications";
+  if (path === "/post-job") return pathname === "/post-job";
+  return pathname === path;
+}
 
 export default function DashboardSidebar({ role, user, collapsed, onToggle }) {
   const navigate = useNavigate();
@@ -68,7 +75,7 @@ export default function DashboardSidebar({ role, user, collapsed, onToggle }) {
               className={`w-full flex items-center rounded-xl text-sm font-semibold transition-colors ${
                 collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2.5"
               } ${
-                location.pathname === path
+                isNavActive(location.pathname, path)
                   ? "bg-[var(--ui-primary-50)] text-[var(--ui-primary)]"
                   : "text-[var(--fg-secondary)] hover:bg-[var(--muted)] hover:text-[var(--fg-primary)]"
               }`}

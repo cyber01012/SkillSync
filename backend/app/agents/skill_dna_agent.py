@@ -147,7 +147,7 @@ def run_skill_dna_sync(session_id: str):
         print(f"[DNA AGENT] Raw: {raw_display}")
         print(f"[DNA AGENT] Weighted: {weighted_display}")
         print(f"[DNA AGENT] Overall DNA: {dna_result['overall']}")
-        print("[DNA AGENT] Stored in SQL Server ✓")
+        print("[DNA AGENT] Stored in SQL Server OK")
 
         db_mongo.work_sessions.update_one(
             {"session_id": session_id},

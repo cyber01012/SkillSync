@@ -238,21 +238,24 @@ export default function BaselineChallenge() {
     }
   }
 
-  async function pollDna(sid) {
-    for (let i = 0; i < 30; i++) {
-      await new Promise((r) => setTimeout(r, 2000));
-      try {
-        const status = await baselineApi.getSessionStatus(sid);
-        if (status.dna_calculated) {
-          navigate("/dashboard/freelancer");
-          return;
-        }
-      } catch {
-        /* retry */
+  // BaselineChallenge.jsx mein pollDna function:
+async function pollDna(sid) {
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    try {
+      const status = await baselineApi.getSessionStatus(sid);
+      if (status.dna_calculated) {
+        // Hard redirect instead of navigate
+        window.location.href = "/dashboard/freelancer";
+        return;
       }
+    } catch {
+      /* retry */
     }
-    navigate("/dashboard/freelancer");
   }
+  // Fallback: redirect anyway after timeout
+  window.location.href = "/dashboard/freelancer";
+}
 
   function handleExpire() {
     if (!submitting) handleSubmit();
