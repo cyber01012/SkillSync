@@ -90,7 +90,7 @@ export default function JobBrowser() {
   const hasFilters = searchQuery || selectedLevel !== "all" || sortBy !== "newest";
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role="freelancer" />
       
       <main className="flex-1 p-6 overflow-y-auto">
@@ -101,7 +101,7 @@ export default function JobBrowser() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="glass-morphism rounded-2xl p-4 mb-6">
+        <div className="premium-glass-card rounded-2xl p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--fg-muted)]" />
@@ -208,7 +208,7 @@ export default function JobBrowser() {
             <div className="w-10 h-10 border-4 border-[#133B6C] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : filteredJobs.length === 0 ? (
-          <div className="glass-morphism rounded-2xl p-12 text-center">
+          <div className="premium-glass-card rounded-2xl p-12 text-center">
             <Briefcase size={48} className="mx-auto text-[var(--fg-muted)] mb-3 opacity-50" />
             <p className="text-[var(--fg-muted)] font-semibold">No jobs found</p>
             <p className="text-sm text-[var(--fg-muted)] mt-1">Try adjusting your search or filters</p>
@@ -224,7 +224,7 @@ export default function JobBrowser() {
               <div
                 key={job.JobID}
                 onClick={() => navigate(`/jobs/${job.JobID}`)}
-                className="glass-morphism rounded-2xl p-5 cursor-pointer hover:shadow-lg transition-all duration-300 group"
+                className="premium-glass-card rounded-2xl p-5 cursor-pointer hover:shadow-lg transition-all duration-300 group"
               >
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">

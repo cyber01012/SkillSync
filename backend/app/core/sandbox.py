@@ -19,7 +19,12 @@ def _build_test_file(test_cases: list[dict]) -> str:
         "",
     ]
     for i, tc in enumerate(test_cases):
-        name = tc.get("name", f"test_case_{i}")
+        # Sanitize name to be a valid Python function name
+        raw_name = tc.get("name", f"test_case_{i}")
+        name = re.sub(r'[^a-zA-Z0-9_]', '_', raw_name)
+        if not name.startswith("test"):
+            name = f"test_{name}"
+            
         validation = tc.get("validation")
         expected_status = tc.get("expected_status")
         inp = tc.get("input", {})
@@ -86,8 +91,9 @@ def _run_python_sandbox(code: str, test_cases: list[dict], timeout_seconds: int)
             import sys
             python_exe = sys.executable
             
+            # Removed -q to ensure verbose output includes test names for regex matching
             result = subprocess.run(
-                [python_exe, "-m", "pytest", str(test_path), "-v", "--tb=short", "-q"],
+                [python_exe, "-m", "pytest", str(test_path), "-v", "--tb=short"],
                 capture_output=True,
                 text=True,
                 timeout=timeout_seconds,
@@ -156,7 +162,7 @@ def _run_python_sandbox(code: str, test_cases: list[dict], timeout_seconds: int)
             }
 
 
-def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> dict[str, Any]:
+def _run_static_analysis(code: str, test_cases: list[dict], language: str, category: str = None) -> dict[str, Any]:
     """Run static analysis for non-Python languages. Returns real pass/fail results."""
     details = []
     passed = 0
@@ -172,7 +178,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         # ───────────────────────────────────────────────
         # REACT STATIC ANALYSIS
         # ───────────────────────────────────────────────
-        if language == "javascript" and "react" in name.lower():
+        if category == "react":
             if validation == "component_mounts":
                 if "import react" in code_lower and ("function" in code_lower or "const" in code_lower) and "return (" in code:
                     status = "passed"
@@ -223,7 +229,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         # ───────────────────────────────────────────────
         # VUE STATIC ANALYSIS
         # ───────────────────────────────────────────────
-        elif language == "javascript" and "vue" in name.lower():
+        elif category == "vue":
             if validation == "component_mounts":
                 if "<template>" in code and "<script>" in code and ("export default" in code or "setup" in code):
                     status = "passed"
@@ -268,7 +274,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         # ───────────────────────────────────────────────
         # NODE.JS / EXPRESS STATIC ANALYSIS
         # ───────────────────────────────────────────────
-        elif language == "javascript" and ("server" in name.lower() or "express" in code_lower or "node" in name.lower()):
+        elif category == "nodejs":
             if validation == "password_is_hashed":
                 if "bcrypt" in code_lower or "hash" in code_lower:
                     status = "passed"
@@ -303,7 +309,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         # ───────────────────────────────────────────────
         # CSS / TAILWIND STATIC ANALYSIS
         # ───────────────────────────────────────────────
-        elif language == "css":
+        elif category == "css":
             if validation == "sidebar_250px":
                 if "250px" in code or "w-64" in code or "width:" in code_lower:
                     status = "passed"
@@ -343,7 +349,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         # ───────────────────────────────────────────────
         # JAVA STATIC ANALYSIS
         # ───────────────────────────────────────────────
-        elif language == "java":
+        elif category == "java":
             if validation == "password_is_hashed":
                 if "BCrypt" in code or "PasswordEncoder" in code or "hash" in code_lower:
                     status = "passed"
@@ -378,23 +384,23 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         # ───────────────────────────────────────────────
         # FULLSTACK (MERN / Python+React) — check both parts
         # ───────────────────────────────────────────────
-        elif language == "javascript" and ("mern" in name.lower() or "fullstack" in name.lower() or "python_react" in name.lower()):
-            if validation == "server_runs":
-                if "listen" in code_lower or "app.listen" in code_lower:
+        elif category in ["mern", "python_react"]:
+            if validation == "server_runs" or validation == "express_server_starts" or validation == "fastapi_server_starts":
+                if "listen" in code_lower or "app.listen" in code_lower or "run(" in code_lower:
                     status = "passed"
                 else:
-                    error = "Missing server.listen"
-            elif validation == "mongo_connects":
+                    error = "Missing server.listen or startup logic"
+            elif validation == "mongo_connects" or validation == "mongoose_connects":
                 if "mongoose" in code_lower or "mongodb" in code_lower:
                     status = "passed"
                 else:
                     error = "Missing mongoose connection"
-            elif validation == "crud_routes_work":
-                if "get(" in code_lower or "post(" in code_lower:
+            elif validation == "crud_routes_work" or validation == "all_routes_work":
+                if "get(" in code_lower or "post(" in code_lower or "@app." in code_lower:
                     status = "passed"
                 else:
-                    error = "Missing CRUD routes"
-            elif validation == "client_fetches_products":
+                    error = "Missing CRUD routes/endpoints"
+            elif validation == "client_fetches_products" or validation == "client_fetches_items":
                 if "fetch" in code_lower or "axios" in code_lower or "useEffect" in code:
                     status = "passed"
                 else:
@@ -404,6 +410,11 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
                     status = "passed"
                 else:
                     error = "Missing React component"
+            elif validation == "models_defined":
+                if "Column" in code or "Schema" in code or "class" in code:
+                    status = "passed"
+                else:
+                    error = "Missing database models/schemas"
             else:
                 if "require(" in code_lower or "import" in code_lower or "export" in code_lower:
                     status = "passed"
@@ -418,7 +429,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
             if len(code.strip()) > 50:
                 status = "passed"
             else:
-                error = f"Unknown language/validation combo: {language}/{validation}"
+                error = f"Unknown language/category/validation combo: {language}/{category}/{validation}"
 
         if status == "passed":
             passed += 1
@@ -437,7 +448,7 @@ def _run_static_analysis(code: str, test_cases: list[dict], language: str) -> di
         "failed": failed,
         "total": len(test_cases),
         "details": details,
-        "stdout": f"Static analysis for {language} — {passed}/{len(test_cases)} passed",
+        "stdout": f"Static analysis for {category or language} — {passed}/{len(test_cases)} passed",
         "stderr": None,
     }
 
@@ -446,12 +457,13 @@ def run_code_in_sandbox(
     code: str,
     test_cases: list[dict],
     language: str = "python",
+    category: str = None,
     timeout_seconds: int = 10,
 ) -> dict[str, Any]:
     """Execute code in a restricted subprocess and return test results."""
 
-    if language == "python":
+    if language == "python" and category != "python_react":
         return _run_python_sandbox(code, test_cases, timeout_seconds)
 
-    # For all other languages, use static analysis
-    return _run_static_analysis(code, test_cases, language)
+    # For all other languages (and mixed categories), use static analysis
+    return _run_static_analysis(code, test_cases, language, category)

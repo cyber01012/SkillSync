@@ -26,12 +26,12 @@ export default function DNATimeline({ snapshots = [] }) {
   const hasData = chartData.length > 0;
 
   return (
-    <div className="rounded-3xl p-8 relative overflow-hidden border border-[var(--color-coral-200)]/60 shadow-[0_8px_32px_-12px_rgba(253,133,102,0.15)]" style={{ background: "linear-gradient(145deg, rgba(255, 240, 236, 0.9), rgba(255, 232, 225, 0.85))", backdropFilter: "blur(24px) saturate(180%)" }}>
+    <div className="rounded-3xl p-8 relative overflow-hidden border border-[var(--color-coral-200)]/60 shadow-[0_8px_32px_-12px_rgba(253,133,102,0.15)] premium-glass-card">
       {/* Richer peach ambient glow */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--color-coral)]/15 blur-[60px] rounded-full -mr-8 -mt-8 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--color-sky)]/10 blur-[50px] rounded-full -ml-8 -mb-8 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--color-coral-100)]/20 blur-[100px] rounded-full pointer-events-none" />
-      
+      <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--color-coral)]/18 blur-[60px] rounded-full -mr-8 -mt-8 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--color-sky)]/12 blur-[50px] rounded-full -ml-8 -mb-8 pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--color-coral-100)]/25 blur-[100px] rounded-full pointer-events-none" />
+
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -45,7 +45,7 @@ export default function DNATimeline({ snapshots = [] }) {
             </div>
           )}
         </div>
-        
+
         {!hasData ? (
           <div className="flex flex-col items-center justify-center py-14 bg-white/50 rounded-2xl border border-dashed border-[var(--border)]">
             <div className="w-16 h-16 rounded-2xl bg-[var(--ui-primary-50)] flex items-center justify-center mb-4 shadow-inner">
@@ -84,24 +84,33 @@ export default function DNATimeline({ snapshots = [] }) {
                   dx={-5}
                 />
                 <Tooltip 
-                  contentStyle={{ 
-                    borderRadius: '16px', 
-                    border: '1px solid rgba(253, 133, 102, 0.3)',
-                    backdropFilter: 'blur(20px)',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    boxShadow: '0 20px 40px -10px rgba(13, 40, 71, 0.15)',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    padding: '12px 16px'
+                  cursor={{ stroke: 'rgba(253, 133, 102, 0.15)', strokeWidth: 2, strokeDasharray: '4 4' }}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    return (
+                      <div className="rounded-2xl p-4 text-[11px] shadow-2xl border border-white/40 animate-in fade-in zoom-in duration-200" style={{ background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(20px)" }}>
+                        <p className="font-black text-[var(--color-navy)] uppercase tracking-wider mb-2">Snapshot {label}</p>
+                        <div className="space-y-1.5">
+                          {payload.map((entry) => (
+                            <div key={entry.name} className="flex items-center justify-between gap-6">
+                              <span className="font-bold text-[var(--fg-muted)] flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                {entry.name}
+                              </span>
+                              <span className="font-black text-[var(--fg-primary)]">{Number(entry.value).toFixed(1)}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
                   }}
-                  cursor={{ stroke: 'rgba(253, 133, 102, 0.2)', strokeWidth: 2 }}
                 />
                 <Legend 
                   wrapperStyle={{ paddingTop: '20px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.08em' }}
                   iconType="circle"
                   iconSize={8}
                 />
-                
+
                 {/* Area fills for depth */}
                 <Area 
                   type="monotone" 
@@ -115,7 +124,7 @@ export default function DNATimeline({ snapshots = [] }) {
                   fill="url(#technicalArea)" 
                   stroke="none"
                 />
-                
+
                 <Line 
                   type="monotone" 
                   dataKey="Overall" 
@@ -154,7 +163,7 @@ export default function DNATimeline({ snapshots = [] }) {
             </ResponsiveContainer>
           </div>
         )}
-        
+
         {/* Stats row when data exists */}
         {hasData && (
           <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-[var(--border)]">

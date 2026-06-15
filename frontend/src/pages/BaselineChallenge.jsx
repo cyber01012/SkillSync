@@ -69,6 +69,7 @@ export default function BaselineChallenge() {
   const [running, setRunning] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [fraudError, setFraudError] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -233,7 +234,11 @@ export default function BaselineChallenge() {
       setProcessing(true);
       pollDna(sessionId);
     } catch (err) {
-      alert(err?.response?.data?.detail || "Submit failed");
+      if (err?.response?.status === 400) {
+        setFraudError(err?.response?.data?.detail || "Fraud detected");
+      } else {
+        alert(err?.response?.data?.detail || "Submit failed");
+      }
       setSubmitting(false);
     }
   }
@@ -267,10 +272,18 @@ async function pollDna(sid) {
   }
 
   function handleNewFile() {
-    const lang = challenge?.language || "python";
-    const ext = lang === "javascript" ? "js" : lang === "typescript" ? "ts" : "py";
+    const cat = (challenge?.category || "").toLowerCase();
+    let ext = "py";
+    if (cat === "react" || cat === "mern" || cat === "python_react") ext = "jsx";
+    else if (cat === "vue") ext = "vue";
+    else if (cat === "nodejs" || cat === "javascript") ext = "js";
+    else if (cat === "typescript") ext = "ts";
+    else if (cat === "java") ext = "java";
+    else if (cat === "css") ext = "css";
+
     const name = `file_${Object.keys(files).length}.${ext}`;
-    setFiles({ ...files, [name]: "# New file\n" });
+    const starter = ext === "py" ? "# New Python file\n" : ext === "jsx" || ext === "js" ? "// New JS/JSX file\n" : "";
+    setFiles({ ...files, [name]: starter });
     setActiveFile(name);
   }
 
@@ -278,7 +291,7 @@ async function pollDna(sid) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-base)]">
+      <div className="min-h-screen flex items-center justify-center premium-dashboard-bg">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-[#133B6C] border-t-transparent rounded-full animate-spin" />
           <p className="font-semibold text-[var(--fg-primary)]">Loading challenge…</p>
@@ -289,7 +302,7 @@ async function pollDna(sid) {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 bg-[var(--bg-base)]">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 premium-dashboard-bg">
         <p className="text-red-600 font-semibold text-center max-w-md">{error}</p>
         <button type="button" onClick={() => window.location.reload()} className="btn-primary">
           Retry
@@ -300,7 +313,7 @@ async function pollDna(sid) {
 
   if (processing) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[var(--bg-base)]">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 premium-dashboard-bg">
         <div className="w-12 h-12 border-4 border-[#133B6C] border-t-transparent rounded-full animate-spin" />
         <p className="font-bold text-[var(--fg-primary)]">AI Scoring in progress…</p>
         <p className="text-sm text-[var(--fg-muted)]">Your Skill DNA is being calculated</p>
@@ -310,7 +323,7 @@ async function pollDna(sid) {
 
   if (challenge?.all_completed) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 bg-[var(--bg-base)]">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 premium-dashboard-bg">
         <h2 className="text-xl font-black text-[var(--fg-primary)]">All challenges completed! 🎉</h2>
         <p className="text-[var(--fg-muted)]">You can retake from the dashboard for a higher difficulty.</p>
         <button
@@ -327,7 +340,7 @@ async function pollDna(sid) {
   const testFileKey = Object.keys(files).find((f) => f.startsWith("test") || f.includes(".test."));
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[var(--bg-base)]">
+    <div className="h-screen flex flex-col overflow-hidden premium-dashboard-bg">
       {/* ── Top Bar ── */}
       <header
         className="flex items-center justify-between px-4 py-3 border-b"
@@ -410,10 +423,7 @@ async function pollDna(sid) {
       {/* ── Submit Confirmation Modal ── */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div
-            className="rounded-2xl border p-6 max-w-md w-full shadow-2xl"
-            style={{ background: "var(--card)", borderColor: "var(--border)" }}
-          >
+          <div className="rounded-2xl border p-6 max-w-md w-full shadow-2xl premium-glass-card">
             <h3 className="font-black text-[var(--fg-primary)] mb-2 text-lg">Submit Solution?</h3>
             <p className="text-sm text-[var(--fg-muted)] mb-6 leading-relaxed">
               This will end the challenge. You cannot retake until 24 hours later.
@@ -436,7 +446,29 @@ async function pollDna(sid) {
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
-}
+        )}
+
+        {/* ── Fraud Alert Modal ── */}
+        {fraudError && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
+          <div className="rounded-3xl border p-8 max-w-md w-full shadow-2xl scale-in-center premium-glass-card">
+            <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-6 mx-auto">
+              <span className="text-3xl">🚫</span>
+            </div>
+            <h3 className="font-black text-[var(--fg-primary)] mb-3 text-2xl text-center">Submission Blocked</h3>
+            <p className="text-sm text-[var(--fg-muted)] mb-8 leading-relaxed text-center font-medium">
+              {fraudError}
+            </p>
+            <button
+              type="button"
+              onClick={() => setFraudError(null)}
+              className="btn-primary w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-lg shadow-black/10 transition-transform active:scale-95"
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
+        )}
+        </div>
+        );
+        }

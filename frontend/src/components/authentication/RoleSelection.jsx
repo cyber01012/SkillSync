@@ -25,7 +25,7 @@ export default function RoleSelection({ onSelectRole, onLoginClick }) {
   ];
 
   return (
-    <div className="w-full h-full bg-[#FFF8F5] flex flex-col items-center justify-center px-6 py-8">
+    <div className="w-full h-full premium-dashboard-bg flex flex-col items-center justify-center px-6 py-8">
       {/* Title Area */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -51,7 +51,7 @@ export default function RoleSelection({ onSelectRole, onLoginClick }) {
             whileHover={{ y: -4, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onSelectRole(role.id)}
-            className="flex-1 group relative bg-white rounded-3xl border border-[#E2D5CF] hover:border-[#FD8566]/40 
+            className="flex-1 group relative bg-white/70 backdrop-blur-xl rounded-3xl border border-white/60 hover:border-[#FD8566]/40 
                        p-6 text-left transition-all duration-300 hover:shadow-xl hover:shadow-[#FD8566]/10"
           >
             {/* Gradient background on hover */}
@@ -59,8 +59,8 @@ export default function RoleSelection({ onSelectRole, onLoginClick }) {
 
             <div className="relative z-10">
               {/* Icon container */}
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FFF8F5] to-[#FEF6F2] 
-                              border border-[#E2D5CF] flex items-center justify-center mb-4
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white/90 to-white/50 
+                              border border-white/40 flex items-center justify-center mb-4
                               group-hover:border-[#FD8566]/30 transition-all duration-300">
                 <role.icon 
                   className="w-8 h-8 transition-colors duration-300" 

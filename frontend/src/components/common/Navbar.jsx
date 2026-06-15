@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Button from "./Button";
+import GradientText from "../design/GradientText";
 
 export default function Navbar({
   showAuthButtons = true,
@@ -43,7 +44,7 @@ export default function Navbar({
           >
             <img src="/images/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
           </motion.div>
-          <span className="text-2xl font-black text-[#133B6C] tracking-tighter">SkillSync</span>
+          <GradientText className="text-2xl font-black tracking-tighter">SkillSync</GradientText>
         </div>
 
         <div className="hidden md:flex items-center gap-10">

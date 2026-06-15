@@ -1,7 +1,10 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+
+def get_karachi_now():
+    return datetime.now(timezone.utc) + timedelta(hours=5)
 
 Base = declarative_base()
 
@@ -12,7 +15,7 @@ class User(Base):
     Email = Column(String(255), unique=True, nullable=False)
     PasswordHash = Column(String(255), nullable=False)
     Role = Column(String(20), nullable=False)
-    CreatedAt = Column(DateTime, default=datetime.utcnow)
+    CreatedAt = Column(DateTime, default=get_karachi_now)
     IsVerified = Column(Boolean, default=False)
 
 class Category(Base):
@@ -51,14 +54,14 @@ class SkillScore(Base):
     FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
     TraitName = Column(String(50))
     Score = Column(Integer, default=50)
-    UpdatedAt = Column(DateTime, default=datetime.utcnow)
+    UpdatedAt = Column(DateTime, default=get_karachi_now)
 
 class TrustScore(Base):
     __tablename__ = "TrustScores"
     TrustID = Column(Integer, primary_key=True, autoincrement=True)
     FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"), unique=True)
     OverallScore = Column(Float, default=50.0)
-    LastCalculatedAt = Column(DateTime, default=datetime.utcnow)
+    LastCalculatedAt = Column(DateTime, default=get_karachi_now)
 
 class ScoreComponent(Base):
     __tablename__ = "ScoreComponents"
@@ -67,7 +70,7 @@ class ScoreComponent(Base):
     FactorName = Column(String(50))
     Weight = Column(Float, default=0.2)
     Value = Column(Float, default=50.0)
-    UpdatedAt = Column(DateTime, default=datetime.utcnow)
+    UpdatedAt = Column(DateTime, default=get_karachi_now)
 
 class JobPost(Base):
     __tablename__ = "JobPosts"
@@ -77,7 +80,7 @@ class JobPost(Base):
     RequiredTrustScore = Column(Integer, default=0)
     MinSkillLevel = Column(String(20), default="beginner")
     Status = Column(String(20), default="open")
-    CreatedAt = Column(DateTime, default=datetime.utcnow)
+    CreatedAt = Column(DateTime, default=get_karachi_now)
 
 
 class Application(Base):
@@ -87,7 +90,7 @@ class Application(Base):
     FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
     CoverNote = Column(Text, nullable=True)
     Status = Column(String(20), default="pending")
-    AppliedAt = Column(DateTime, default=datetime.utcnow)
+    AppliedAt = Column(DateTime, default=get_karachi_now)
 
 
 class ChallengeResult(Base):
@@ -97,14 +100,14 @@ class ChallengeResult(Base):
     ChallengeID = Column(String(50))
     Score = Column(Integer)
     TimeTaken = Column(Integer)
-    CompletedAt = Column(DateTime, default=datetime.utcnow)
+    CompletedAt = Column(DateTime, default=get_karachi_now)
 
 class DNASnapshot(Base):
     __tablename__ = "DNASnapshots"
     SnapshotID = Column(Integer, primary_key=True, autoincrement=True)
     FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
     SnapshotData = Column(Text)
-    TakenAt = Column(DateTime, default=datetime.utcnow)
+    TakenAt = Column(DateTime, default=get_karachi_now)
 
 class RefreshToken(Base):
     __tablename__ = "RefreshTokens"
@@ -112,14 +115,14 @@ class RefreshToken(Base):
     UserID = Column(Integer, ForeignKey("Users.UserID"), nullable=False)
     Token = Column(String(512), unique=True, nullable=False)
     ExpiresAt = Column(DateTime, nullable=False)
-    CreatedAt = Column(DateTime, default=datetime.utcnow)
+    CreatedAt = Column(DateTime, default=get_karachi_now)
     IsRevoked = Column(Boolean, default=False)
 
 class BlacklistedToken(Base):
     __tablename__ = "BlacklistedTokens"
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Token = Column(String(512), unique=True, nullable=False)
-    BlacklistedAt = Column(DateTime, default=datetime.utcnow)
+    BlacklistedAt = Column(DateTime, default=get_karachi_now)
 
 class PasswordResetToken(Base):
     __tablename__ = "PasswordResetTokens"
@@ -128,7 +131,7 @@ class PasswordResetToken(Base):
     Token = Column(String(512), unique=True, nullable=False)
     ExpiresAt = Column(DateTime, nullable=False)
     IsUsed = Column(Boolean, default=False)
-    CreatedAt = Column(DateTime, default=datetime.utcnow)
+    CreatedAt = Column(DateTime, default=get_karachi_now)
 
 # ── EXISTING MODELS KE BAAD YEH ADD KARO ──
 
@@ -140,7 +143,7 @@ class Contract(Base):
     ClientID = Column(Integer, ForeignKey("ClientProfiles.ClientID"))
     TotalAmount = Column(Float, default=0.0)
     Status = Column(String(20), default="active")
-    CreatedAt = Column(DateTime, default=datetime.utcnow)
+    CreatedAt = Column(DateTime, default=get_karachi_now)
 
 
 class Milestone(Base):
@@ -160,7 +163,7 @@ class PaymentEvent(Base):
     ContractID = Column(Integer, ForeignKey("Contracts.ContractID"))
     Amount = Column(Float)
     EventType = Column(String(50))
-    ProcessedAt = Column(DateTime, default=datetime.utcnow)
+    ProcessedAt = Column(DateTime, default=get_karachi_now)
     EscrowBalance = Column(Float, default=0.0)
 
 
@@ -180,7 +183,7 @@ class FlaggedAccounts(Base):
     UserID = Column(Integer, ForeignKey("Users.UserID"))
     FlagType = Column(String(50))
     Severity = Column(String(20), default="low")
-    DetectedAt = Column(DateTime, default=datetime.utcnow)
+    DetectedAt = Column(DateTime, default=get_karachi_now)
     Status = Column(String(20), default="pending")
 
 
@@ -190,5 +193,5 @@ class ScoreHistory(Base):
     FreelancerID = Column(Integer, ForeignKey("FreelancerProfiles.FreelancerID"))
     OldScore = Column(Float)
     NewScore = Column(Float)
-    ChangedAt = Column(DateTime, default=datetime.utcnow)
+    ChangedAt = Column(DateTime, default=get_karachi_now)
     Reason = Column(String(255))

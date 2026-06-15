@@ -14,7 +14,7 @@ function TrustRing({ score, size = 40 }) {
           cy={size / 2}
           r={size / 2 - 4}
           fill="none"
-          stroke="#E2D5CF"
+          stroke="#D8CFC9"
           strokeWidth="3"
         />
         <circle

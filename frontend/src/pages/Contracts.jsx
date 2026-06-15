@@ -55,7 +55,7 @@ export default function Contracts() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role={profile?.Role || localStorage.getItem("role")} user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -79,7 +79,7 @@ export default function Contracts() {
             <Loader2 size={32} className="animate-spin text-[var(--fg-muted)]" />
           </div>
         ) : contracts.length === 0 ? (
-          <div className="glass-morphism rounded-2xl p-8 text-center">
+          <div className="premium-glass-card rounded-2xl p-8 text-center">
             <Briefcase size={48} className="mx-auto text-[var(--fg-muted)] mb-3 opacity-50" />
             <h3 className="font-bold text-[var(--fg-primary)] mb-2">No contracts yet</h3>
             <p className="text-sm text-[var(--fg-muted)] mb-4">
@@ -103,7 +103,7 @@ export default function Contracts() {
                 key={contract.ContractID}
                 type="button"
                 onClick={() => navigate(`/contracts/${contract.ContractID}`)}
-                className="w-full text-left glass-morphism rounded-2xl p-6 hover:shadow-lg transition-all group"
+                className="w-full text-left premium-glass-card rounded-2xl p-6 hover:shadow-lg transition-all group"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">

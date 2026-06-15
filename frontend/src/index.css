@@ -44,8 +44,8 @@
 
 :root {
   /* ── BACKGROUNDS ── */
-  --bg-base:        #FFF8F5;        /* subtle warm peach - main bg */
-  --bg-surface:     #FEF6F2;        /* slightly warmer card bg */
+  --bg-base:        #F5EDE8;
+  --bg-surface:     #F0E6E0;
   --bg-elevated:    #FFFFFF;
   --bg-dark:        #0D2847;
 
@@ -56,15 +56,15 @@
   --fg-inverse:     #FFFFFF;
 
   /* ── SURFACES ── */
-  --card:           rgba(255, 255, 255, 0.92);
-  --card-warm:      rgba(254, 246, 242, 0.95);
-  --muted:          rgba(19, 59, 108, 0.06);
-  --border:         rgba(19, 59, 108, 0.12);
-  --border-warm:    rgba(253, 133, 102, 0.2);
+  --card:           rgba(255, 255, 255, 0.85);
+  --card-warm:      rgba(254, 246, 242, 0.92);
+  --muted:          rgba(19, 59, 108, 0.08);
+  --border:         rgba(19, 59, 108, 0.14);
+  --border-warm:    rgba(253, 133, 102, 0.25);
 
   /* ── GLASS MORPHISM ── */
-  --glass:          rgba(255, 248, 245, 0.75);
-  --glass-border:   rgba(19, 59, 108, 0.15);
+  --glass:          rgba(255, 248, 245, 0.78);
+  --glass-border:   rgba(19, 59, 108, 0.18);
 }
 
 /* ============================================================
@@ -78,9 +78,9 @@
   --ui-primary-200: #9BBBD9;
   --ui-text:        #133B6C;
   --ui-muted:       #8BA3BE;
-  --ui-border:      #E2D5CF;
-  --ui-bg:          #FFF8F5;
-  --ui-card:        #FEF6F2;
+  --ui-border:      #D8CFC9;
+  --ui-bg:          #F5EDE8;
+  --ui-card:        #F5E8E0;
 }
 
 /* ============================================================
@@ -112,7 +112,7 @@ html {
 
 @layer components {
   .input {
-    @apply w-full rounded-xl border border-[#E2D5CF] bg-white px-4 py-3 text-sm outline-none 
+    @apply w-full rounded-xl border border-[#D8CFC9] bg-white px-4 py-3 text-sm outline-none 
            focus:border-[#FD8566] focus:ring-2 focus:ring-[#FD8566]/20 transition-all;
   }
   .label {
@@ -190,22 +190,22 @@ html {
 
 .bg-mesh-subtle {
   background-image:
-    radial-gradient(at 0% 0%, hsla(14, 97%, 70%, 0.1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(210, 70%, 35%, 0.08) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(214, 50%, 60%, 0.06) 0, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(14, 97%, 70%, 0.12) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(210, 70%, 35%, 0.10) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(214, 50%, 60%, 0.08) 0, transparent 50%);
 }
 
 .bg-mesh-dark {
   background-image:
-    radial-gradient(at 0% 0%, hsla(14, 97%, 70%, 0.12) 0, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(210, 70%, 35%, 0.15) 0, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(14, 97%, 70%, 0.15) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(210, 70%, 35%, 0.18) 0, transparent 50%);
 }
 
 .bg-mesh-peach {
   background-image:
-    radial-gradient(at 20% 20%, hsla(14, 97%, 70%, 0.15) 0, transparent 50%),
-    radial-gradient(at 80% 80%, hsla(210, 70%, 35%, 0.08) 0, transparent 50%),
-    radial-gradient(at 50% 50%, hsla(14, 80%, 85%, 0.1) 0, transparent 60%);
+    radial-gradient(at 20% 20%, hsla(14, 97%, 70%, 0.18) 0, transparent 50%),
+    radial-gradient(at 80% 80%, hsla(210, 70%, 35%, 0.10) 0, transparent 50%),
+    radial-gradient(at 50% 50%, hsla(14, 80%, 85%, 0.12) 0, transparent 60%);
 }
 
 /* Glass morphism + header */
@@ -214,7 +214,7 @@ html {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(13, 40, 71, 0.06);
+  box-shadow: 0 8px 32px 0 rgba(13, 40, 71, 0.08);
 }
 
 .reflective-header {
@@ -222,7 +222,7 @@ html {
   backdrop-filter: blur(16px) saturate(150%);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 /* SkillSync Badge Shape — Coral variant */
@@ -241,11 +241,11 @@ html {
 
 /* Custom Scrollbars (global) */
 ::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #FFF8F5; }
+::-webkit-scrollbar-track { background: #F5EDE8; }
 ::-webkit-scrollbar-thumb {
   background: #133B6C;
   border-radius: 10px;
-  border: 3px solid #FFF8F5;
+  border: 3px solid #F5EDE8;
 }
 ::-webkit-scrollbar-thumb:hover { background: #FD8566; }
 
@@ -381,7 +381,7 @@ input:-webkit-autofill {
 
 @layer components {
   .chip {
-    @apply bg-white/90 text-[#133B6C] border-[#E2D5CF] hover:bg-white hover:shadow-md
+    @apply bg-white/90 text-[#133B6C] border-[#D8CFC9] hover:bg-white hover:shadow-md
            transition-all duration-200;
     box-shadow: 0 8px 18px -12px rgba(19, 59, 108, 0.2);
   }
@@ -401,7 +401,7 @@ input:-webkit-autofill {
   }
 
   .kbd {
-    @apply px-1.5 py-[1px] rounded-md bg-white/90 border border-[#E2D5CF] text-[#133B6C] shadow-sm;
+    @apply px-1.5 py-[1px] rounded-md bg-white/90 border border-[#D8CFC9] text-[#133B6C] shadow-sm;
   }
 }
 
@@ -466,7 +466,7 @@ input:-webkit-autofill {
 }
 
 .trust-score-ring .bg-ring {
-  stroke: #E2D5CF;
+  stroke: #D8CFC9;
 }
 
 .trust-score-ring .progress-ring {
@@ -506,6 +506,207 @@ input:-webkit-autofill {
   height: 12px;
   border-radius: 50%;
   background: #133B6C;
-  border: 3px solid #FFF8F5;
+  border: 3px solid #F5EDE8;
   box-shadow: 0 0 0 2px #133B6C;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DARKER DASHBOARD BACKGROUND — premium-dashboard-bg
+   ════════════════════════════════════════════════════════════ */
+
+.premium-dashboard-bg {
+  background:
+    /* Deep navy radial at corners — much stronger */
+    radial-gradient(ellipse 70% 55% at 10% 5%, rgba(19, 59, 108, 0.32) 0%, transparent 55%),
+    radial-gradient(ellipse 65% 50% at 90% 90%, rgba(13, 40, 71, 0.36) 0%, transparent 55%),
+    /* Coral warmth — more saturated & visible */
+    radial-gradient(ellipse 60% 45% at 20% 80%, rgba(253, 133, 102, 0.26) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 80% 15%, rgba(253, 133, 102, 0.20) 0%, transparent 50%),
+    /* Sky blue mid-tones */
+    radial-gradient(ellipse 55% 45% at 50% 50%, rgba(95, 144, 212, 0.18) 0%, transparent 55%),
+    /* Base gradient — significantly darker, richer */
+    linear-gradient(165deg, #E8DDD8 0%, #D8E2EA 30%, #CCD8E6 55%, #DDD4D0 80%, #D0DCE8 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ENHANCED GLASS CARDS — More visible on dark bg
+   ════════════════════════════════════════════════════════════ */
+
+.premium-glass-card {
+  background: rgba(255, 255, 255, 0.78) !important;
+  backdrop-filter: blur(32px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(220%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.88) !important;
+  box-shadow:
+    0 4px 24px -4px rgba(19, 59, 108, 0.12),
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    inset 0 0 0 1px rgba(255,255,255,0.55) !important;
+}
+
+.premium-glass-card:hover {
+  box-shadow:
+    0 16px 48px -8px rgba(19, 59, 108, 0.16),
+    0 1px 0 rgba(255,255,255,0.95) inset,
+    inset 0 0 0 1px rgba(255,255,255,0.65) !important;
+  transform: translateY(-2px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION LABEL — Enhanced
+   ════════════════════════════════════════════════════════════ */
+
+.dashboard-section-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(19,59,108,0.20), transparent 80%);
+}
+
+/* ════════════════════════════════════════════════════════════
+   ENTRANCE ANIMATIONS — Smoother
+   ════════════════════════════════════════════════════════════ */
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-up-1 { animation-delay: 0.06s; }
+.animate-slide-up-2 { animation-delay: 0.12s; }
+.animate-slide-up-3 { animation-delay: 0.18s; }
+.animate-slide-up-4 { animation-delay: 0.24s; }
+.animate-slide-up-5 { animation-delay: 0.30s; }
+
+/* ════════════════════════════════════════════════════════════
+   CARD ACCENT STRIPES — Enhanced visibility
+   ════════════════════════════════════════════════════════════ */
+
+.glass-card-accent-coral {
+  border-left: 3px solid rgba(253, 133, 102, 0.7) !important;
+}
+.glass-card-accent-navy {
+  border-left: 3px solid rgba(19, 59, 108, 0.6) !important;
+}
+.glass-card-accent-sky {
+  border-left: 3px solid rgba(95, 144, 212, 0.6) !important;
+}
+.glass-card-accent-emerald {
+  border-left: 3px solid rgba(16, 185, 129, 0.6) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SIDEBAR GLASS DARK — Enhanced
+   ════════════════════════════════════════════════════════════ */
+
+.sidebar-glass-dark {
+  background: rgba(13, 40, 71, 0.96) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 4px 0 24px rgba(13, 40, 71, 0.15) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SCROLLBAR ENHANCEMENTS
+   ════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(19, 59, 108, 0.22);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(253, 133, 102, 0.45);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FOCUS STATES
+   ════════════════════════════════════════════════════════════ */
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(253, 133, 102, 0.5);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CARET / CURSOR FIX — Aggressive blinking cursor removal
+   ════════════════════════════════════════════════════════════ */
+
+/* Strategy 1: Global caret-color transparent on ALL elements */
+* {
+  caret-color: transparent !important;
+}
+
+/* Strategy 2: Re-enable caret ONLY on actual inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea,
+[contenteditable="true"] {
+  caret-color: auto !important;
+}
+
+/* Strategy 3: Prevent focus outline on non-inputs (stops focus-based caret) */
+*:not(input):not(textarea):not([contenteditable="true"]):focus {
+  outline: none !important;
+  caret-color: transparent !important;
+}
+
+/* Strategy 4: user-select: none on all interactive/non-text elements */
+button, a, [role="button"], nav, .nav-item, .sidebar,
+.stat-widget-icon, .premium-glass-card,
+.logo, .brand, [class*="logo"], [class*="brand"],
+.animate-spin, .loading-pulse-ring {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  user-select: none !important;
+  caret-color: transparent !important;
+}
+
+/* Strategy 5: Prevent navigation caret on text content */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  caret-color: transparent !important;
+}
+
+/* Strategy 6: Loading spinner specifically */
+.animate-spin, .animate-spin * {
+  caret-color: transparent !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  pointer-events: none;
 }

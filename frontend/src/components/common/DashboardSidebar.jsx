@@ -6,6 +6,7 @@ import {
   ArrowLeftCircle
 } from "lucide-react";
 import AuthMenu from "../dashboard/AuthMenu";
+import GradientText from "../design/GradientText";
 
 
 const FREELANCER_NAV = [
@@ -50,58 +51,60 @@ export default function DashboardSidebar({ role, user, collapsed, onToggle }) {
 
   return (
     <aside
-      className={`border-r border-[var(--border)] min-h-screen flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out relative ${
+      className={`sidebar-glass-dark min-h-screen flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out relative z-20 ${
         collapsed ? "w-16 p-2" : "w-64 p-4"
       }`}
-      style={{ background: "var(--color-coral-light, #FFA88F)" }}
     >
       {/* Toggle Button */}
       <button
         type="button"
         onClick={onToggle}
-        className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-white border border-[var(--border)] shadow-sm flex items-center justify-center hover:bg-[var(--muted)] transition-colors z-10"
+        className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-[#0D2847] border border-white/10 shadow-lg flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-all z-30"
         title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
-        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
       </button>
 
       <div>
         {/* Logo */}
         <div className={`flex items-center gap-3 mb-8 px-2 ${collapsed ? "justify-center" : ""}`}>
-          <img src="/images/logo.png" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
+          <img src="/images/logo.png" alt="Logo" className="w-8 h-8 object-contain shrink-0 animate-dna" />
           {!collapsed && (
-            <span className="text-xl font-black text-[var(--fg-primary)] tracking-tighter whitespace-nowrap">
+            <GradientText className="text-xl font-black tracking-tighter whitespace-nowrap">
               SkillSync
-            </span>
+            </GradientText>
           )}
         </div>
 
         {/* Navigation */}
         <nav className="space-y-1">
-          {nav.map(({ label, icon: Icon, path }) => (
-            <button
-              key={label}
-              type="button"
-              onClick={() => navigate(path)}
-              title={collapsed ? label : undefined}
-              className={`w-full flex items-center rounded-xl text-sm font-semibold transition-colors ${
-                collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2.5"
-              } ${
-                isNavActive(location.pathname, path)
-                  ? "bg-[var(--ui-primary-50)] text-[var(--ui-primary)]"
-                  : "text-[var(--fg-secondary)] hover:bg-[var(--muted)] hover:text-[var(--fg-primary)]"
-              }`}
-            >
-              <Icon size={18} className="shrink-0" />
-              {!collapsed && <span className="whitespace-nowrap">{label}</span>}
-            </button>
-          ))}
+          {nav.map(({ label, icon: Icon, path }) => {
+            const active = isNavActive(location.pathname, path);
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => navigate(path)}
+                title={collapsed ? label : undefined}
+                className={`w-full flex items-center rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3.5 py-2.5"
+                } ${
+                  active
+                    ? "bg-gradient-to-r from-[var(--color-coral)] to-[var(--color-coral-light)] text-white shadow-lg shadow-[var(--color-coral)]/20 border border-white/10"
+                    : "text-slate-300/80 hover:bg-white/8 hover:text-white"
+                }`}
+              >
+                <Icon size={18} className={`shrink-0 ${active ? "text-white" : "text-slate-400 group-hover:text-white"}`} />
+                {!collapsed && <span className="whitespace-nowrap">{label}</span>}
+              </button>
+            );
+          })}
         </nav>
       </div>
 
       {/* Auth Menu */}
       <div className={`pb-2 ${collapsed ? "px-0 flex justify-center" : "px-2"}`}>
-        <AuthMenu user={user} role={role} collapsed={collapsed} />
+        <AuthMenu user={user} role={role} collapsed={collapsed} inSidebar={true} />
       </div>
     </aside>
   );

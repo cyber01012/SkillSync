@@ -68,7 +68,7 @@ export default function Applicants() {
   const totalApplicants = Object.values(applicantsMap).flat().length;
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role="client" user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -87,7 +87,7 @@ export default function Applicants() {
             <Loader2 size={32} className="animate-spin text-[var(--fg-muted)]" />
           </div>
         ) : totalApplicants === 0 ? (
-          <div className="glass-morphism rounded-2xl p-8 text-center">
+          <div className="premium-glass-card rounded-2xl p-8 text-center">
             <Users size={48} className="mx-auto text-[var(--fg-muted)] mb-3 opacity-50" />
             <h3 className="font-bold text-[var(--fg-primary)] mb-2">No applicants yet</h3>
             <p className="text-sm text-[var(--fg-muted)] mb-4">Post jobs and wait for freelancers to apply</p>
@@ -101,7 +101,7 @@ export default function Applicants() {
               const apps = applicantsMap[job.JobID] || [];
               if (apps.length === 0) return null;
               return (
-                <div key={job.JobID} className="glass-morphism rounded-2xl p-6">
+                <div key={job.JobID} className="premium-glass-card rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-bold text-[var(--fg-primary)] flex items-center gap-2">
                       <Briefcase size={18} />

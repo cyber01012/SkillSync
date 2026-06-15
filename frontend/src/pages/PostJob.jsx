@@ -124,7 +124,7 @@ export default function PostJob() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role="client" user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -137,7 +137,7 @@ export default function PostJob() {
         </button>
 
         <div className="max-w-3xl mx-auto">
-          <div className="glass-morphism rounded-2xl p-8">
+          <div className="premium-glass-card rounded-2xl p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-xl bg-[#FD8566] flex items-center justify-center">
                 <Briefcase size={24} className="text-white" />

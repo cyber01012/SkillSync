@@ -6,16 +6,7 @@ import ProfileCard from "../components/dashboard/ProfileCard";
 import SkillDNACard from "../components/dashboard/SkillDNACard";
 import DNATimeline from "../components/dashboard/DNATimeline";
 import ActivityFeed from "../components/dashboard/ActivityFeed";
-import AuthMenu from "../components/dashboard/AuthMenu";
 import DashboardSidebar from "../components/common/DashboardSidebar";
-import GradientText from "../components/design/GradientText";
-
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning";
-  if (hour < 17) return "Good Afternoon";
-  return "Good Evening";
-}
 
 export default function FreelancerDashboard() {
   const navigate = useNavigate();
@@ -27,22 +18,13 @@ export default function FreelancerDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [greeting, setGreeting] = useState(getGreeting());
-
-  // Update greeting every minute
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setGreeting(getGreeting());
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   async function loadData() {
     setError(null);
     try {
       const status = await profileApi.getStatus();
       console.log("Profile status:", status);
-      
+
       if (!status.has_category) {
         navigate("/category-selection");
         return;
@@ -92,9 +74,24 @@ export default function FreelancerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex items-center justify-center premium-dashboard-bg">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full border-4 border-[var(--color-coral)]/20 border-t-[var(--color-coral)] animate-spin" />
+          <div className="relative w-12 h-12">
+            <div className="absolute inset-0 rounded-full border-4 border-[var(--color-coral)]/10" />
+            <svg className="absolute inset-0 animate-spin" viewBox="0 0 50 50">
+              <circle
+                className="opacity-100"
+                cx="25"
+                cy="25"
+                r="20"
+                fill="none"
+                stroke="var(--color-coral)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="31.4, 31.4"
+              />
+            </svg>
+          </div>
           <p className="text-[var(--fg-primary)] font-bold animate-pulse">Loading your Skill DNA...</p>
         </div>
       </div>
@@ -103,7 +100,7 @@ export default function FreelancerDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 premium-dashboard-bg">
         <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-2">
           <span className="text-2xl">⚠️</span>
         </div>
@@ -114,12 +111,14 @@ export default function FreelancerDashboard() {
   }
 
   return (
-    <div className="relative min-h-screen flex overflow-hidden font-sans" style={{ background: "var(--bg-base)" }}>
-      {/* Premium ambient background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-5%] w-[35%] h-[35%] bg-[var(--color-sky)]/8 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[35%] h-[35%] bg-[var(--color-coral)]/6 blur-[120px] rounded-full" />
-        <div className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[50%] h-[50%] bg-[var(--color-coral-100)]/10 blur-[150px] rounded-full" />
+    <div className="relative min-h-screen flex overflow-hidden font-sans premium-dashboard-bg">
+      {/* Deep vibrant ambient background orbs — significantly more saturated */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-15%] left-[-10%] w-[60%] h-[60%] bg-[#FD8566]/32 blur-[160px] rounded-full animate-orb-pulse" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[55%] h-[55%] bg-[#133B6C]/30 blur-[160px] rounded-full animate-orb-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-[25%] left-[35%] w-[50%] h-[50%] bg-[#5F90D4]/22 blur-[140px] rounded-full animate-orb-pulse" style={{ animationDelay: '3s' }} />
+        <div className="absolute top-[10%] right-[15%] w-[30%] h-[30%] bg-[#FD8566]/20 blur-[100px] rounded-full animate-orb-pulse" style={{ animationDelay: '4.5s' }} />
+        <div className="absolute bottom-[25%] left-[20%] w-[35%] h-[35%] bg-[#1E4E85]/24 blur-[130px] rounded-full animate-orb-pulse" style={{ animationDelay: '0.75s' }} />
       </div>
 
       <DashboardSidebar
@@ -129,45 +128,36 @@ export default function FreelancerDashboard() {
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
-      <main className="relative z-10 flex-1 p-6 overflow-y-auto transition-all duration-300 ease-in-out">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-10 max-w-7xl">
-          <div className="pt-1">
-            <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-none">
-              <GradientText animationSpeed={5} className="font-italic">
-                {greeting}
-              </GradientText>
-            </h1>
-            <p className="text-xl md:text-4xl font-bold italic text-[var(--fg-secondary)] mt-3">
-              <span className="text-[var(--color-coral)] font-black">{profile?.DisplayName?.split(' ')[0]}</span>
-            </p>
-          </div>
-          <div className="pt-2">
-            <AuthMenu user={profile} role="freelancer" />
-          </div>
-        </div>
-
+      <main className="relative z-10 flex-1 p-6 lg:p-8 overflow-y-auto transition-all duration-300 ease-in-out">
         <div className="space-y-8 max-w-7xl">
-          {/* Profile Card - Full Width */}
-          <ProfileCard
-            profile={profile}
-            onEdit={() => navigate("/profile-settings")}
-            onPhotoUpload={handlePhotoUpload}
-          />
-
-          {/* DNA Cards Grid - Equal Height */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            <SkillDNACard
-              scores={scores}
-              weights={weights}
-              overallDna={profile?.overall_dna}
-              categoryName={profile?.category_display_name}
+          {/* Profile Card */}
+          <div className="animate-slide-up">
+            <ProfileCard
+              profile={profile}
+              onEdit={() => navigate("/profile-settings")}
+              onPhotoUpload={handlePhotoUpload}
             />
-            <DNATimeline snapshots={snapshots} />
           </div>
 
-          {/* Activity Feed - Full Width */}
-          <ActivityFeed items={activity} />
+          {/* DNA Cards Grid */}
+          <div className="animate-slide-up">
+            <p className="dashboard-section-label mb-4">Skill Intelligence</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+              <SkillDNACard
+                scores={scores}
+                weights={weights}
+                overallDna={profile?.overall_dna}
+                categoryName={profile?.category_display_name}
+              />
+              <DNATimeline snapshots={snapshots} />
+            </div>
+          </div>
+
+          {/* Activity Feed */}
+          <div className="animate-slide-up">
+            <p className="dashboard-section-label mb-4">Proof Ledger</p>
+            <ActivityFeed items={activity} />
+          </div>
         </div>
       </main>
     </div>

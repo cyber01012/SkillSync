@@ -183,7 +183,7 @@ export default function JobDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex items-center justify-center premium-dashboard-bg">
         <p className="font-bold text-[var(--fg-primary)]">Loading job...</p>
       </div>
     );
@@ -191,7 +191,7 @@ export default function JobDetail() {
 
   if (error || !job) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex items-center justify-center premium-dashboard-bg">
         <div className="text-center">
           <p className="text-[var(--fg-primary)] font-bold mb-4">{error || "Job not found"}</p>
           <button type="button" onClick={() => navigate(-1)} className="btn-primary">Go Back</button>
@@ -207,7 +207,7 @@ export default function JobDetail() {
   ];
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role={role} user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -219,7 +219,7 @@ export default function JobDetail() {
           <ArrowLeft size={16} /> Back
         </button>
 
-        <div className="glass-morphism rounded-2xl p-6 mb-6">
+        <div className="premium-glass-card rounded-2xl p-6 mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-black text-[var(--fg-primary)]">{job.Title}</h1>
@@ -260,7 +260,7 @@ export default function JobDetail() {
               ))}
             </div>
 
-            <div className="glass-morphism rounded-2xl p-6">
+            <div className="premium-glass-card rounded-2xl p-6">
               {tab === "details" && <JobDetailsPanel job={job} />}
 
               {tab === "applicants" && (
@@ -352,10 +352,10 @@ export default function JobDetail() {
           </>
         ) : (
           <div className="grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 glass-morphism rounded-2xl p-6">
+            <div className="lg:col-span-2 premium-glass-card rounded-2xl p-6">
               <JobDetailsPanel job={job} />
             </div>
-            <div className="glass-morphism rounded-2xl p-6">
+            <div className="premium-glass-card rounded-2xl p-6">
               <h2 className="font-bold text-[var(--fg-primary)] mb-4">Apply for this job</h2>
               {job.has_applied ? (
                 <div className="text-center py-6">

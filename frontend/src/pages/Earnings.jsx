@@ -54,7 +54,7 @@ export default function Earnings() {
   const activeContracts = contracts.filter((c) => c.Status === "active").length;
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role="freelancer" user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -70,7 +70,7 @@ export default function Earnings() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="glass-morphism rounded-2xl p-5">
+          <div className="premium-glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-[#133B6C] flex items-center justify-center">
                 <Wallet size={20} className="text-white" />
@@ -79,7 +79,7 @@ export default function Earnings() {
             </div>
             <p className="text-2xl font-black text-[var(--fg-primary)]">${totalEarned.toLocaleString()}</p>
           </div>
-          <div className="glass-morphism rounded-2xl p-5">
+          <div className="premium-glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-[#FD8566] flex items-center justify-center">
                 <Briefcase size={20} className="text-white" />
@@ -88,7 +88,7 @@ export default function Earnings() {
             </div>
             <p className="text-2xl font-black text-[var(--fg-primary)]">{activeContracts}</p>
           </div>
-          <div className="glass-morphism rounded-2xl p-5">
+          <div className="premium-glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
                 <TrendingUp size={20} className="text-white" />
@@ -104,13 +104,13 @@ export default function Earnings() {
             <Loader2 size={32} className="animate-spin text-[var(--fg-muted)]" />
           </div>
         ) : payments.length === 0 ? (
-          <div className="glass-morphism rounded-2xl p-8 text-center">
+          <div className="premium-glass-card rounded-2xl p-8 text-center">
             <DollarSign size={48} className="mx-auto text-[var(--fg-muted)] mb-3 opacity-50" />
             <p className="text-[var(--fg-muted)]">No earnings yet</p>
             <p className="text-sm text-[var(--fg-muted)] mt-2">Complete contracts to start earning</p>
           </div>
         ) : (
-          <div className="glass-morphism rounded-2xl p-6">
+          <div className="premium-glass-card rounded-2xl p-6">
             <h3 className="font-bold text-[var(--fg-primary)] mb-4">Payment History</h3>
             <div className="space-y-3">
               {payments.map((payment, idx) => (

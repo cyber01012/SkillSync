@@ -53,7 +53,7 @@ export default function Payments() {
     .reduce((sum, p) => sum + (p.Amount || 0), 0);
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role="client" user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -69,7 +69,7 @@ export default function Payments() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="glass-morphism rounded-2xl p-5">
+          <div className="premium-glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-[#133B6C] flex items-center justify-center">
                 <DollarSign size={20} className="text-white" />
@@ -78,7 +78,7 @@ export default function Payments() {
             </div>
             <p className="text-2xl font-black text-[var(--fg-primary)]">${totalEscrow.toLocaleString()}</p>
           </div>
-          <div className="glass-morphism rounded-2xl p-5">
+          <div className="premium-glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-[#FD8566] flex items-center justify-center">
                 <ArrowRight size={20} className="text-white" />
@@ -87,7 +87,7 @@ export default function Payments() {
             </div>
             <p className="text-2xl font-black text-[var(--fg-primary)]">${totalReleased.toLocaleString()}</p>
           </div>
-          <div className="glass-morphism rounded-2xl p-5">
+          <div className="premium-glass-card rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-[#5F90D4] flex items-center justify-center">
                 <Shield size={20} className="text-white" />
@@ -103,12 +103,12 @@ export default function Payments() {
             <Loader2 size={32} className="animate-spin text-[var(--fg-muted)]" />
           </div>
         ) : payments.length === 0 ? (
-          <div className="glass-morphism rounded-2xl p-8 text-center">
+          <div className="premium-glass-card rounded-2xl p-8 text-center">
             <CreditCard size={48} className="mx-auto text-[var(--fg-muted)] mb-3 opacity-50" />
             <p className="text-[var(--fg-muted)]">No payment activity yet</p>
           </div>
         ) : (
-          <div className="glass-morphism rounded-2xl p-6">
+          <div className="premium-glass-card rounded-2xl p-6">
             <h3 className="font-bold text-[var(--fg-primary)] mb-4">Payment History</h3>
             <div className="space-y-3">
               {payments.map((payment, idx) => (

@@ -36,15 +36,22 @@ export default function CategorySelection() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen premium-dashboard-bg flex items-center justify-center">
         <p className="font-bold text-[var(--fg-primary)]">Loading categories...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6" style={{ background: "var(--bg-base)" }}>
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen premium-dashboard-bg p-6 relative overflow-hidden">
+      {/* Deep ambient orbs */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] left-[-5%] w-[45%] h-[45%] bg-[#FD8566]/20 blur-[140px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#133B6C]/18 blur-[140px] rounded-full" />
+        <div className="absolute top-[40%] left-[30%] w-[35%] h-[35%] bg-[#5F90D4]/12 blur-[120px] rounded-full" />
+      </div>
+
+      <div className="max-w-2xl mx-auto relative z-10">
         <h1 className="text-2xl font-black text-[var(--fg-primary)] mb-2">Choose Your Specialty</h1>
         <p className="text-[var(--fg-muted)] mb-8">Select your domain and specialty to get matched challenges</p>
 
@@ -57,7 +64,7 @@ export default function CategorySelection() {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] p-6 mb-6" style={{ background: "var(--card)" }}>
+        <div className="premium-glass-card rounded-2xl p-6 mb-6">
           {step === 1 ? (
             <DomainSelection
               domains={domains}

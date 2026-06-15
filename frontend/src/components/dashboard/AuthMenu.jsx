@@ -3,7 +3,7 @@ import { User, Lock, LogOut, LogOutIcon, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../api/auth";
 
-export default function AuthMenu({ user, role = "freelancer" }) {
+export default function AuthMenu({ user, role = "freelancer", collapsed = false, inSidebar = false }) {
   const [open, setOpen] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ current: "", newPass: "", confirm: "" });
@@ -67,18 +67,28 @@ export default function AuthMenu({ user, role = "freelancer" }) {
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-2 p-2 rounded-xl hover:bg-[var(--muted)] transition"
+          className={`flex items-center gap-2 p-2 rounded-xl transition w-full ${
+            inSidebar 
+              ? "hover:bg-white/10 text-slate-200" 
+              : "hover:bg-[var(--muted)] text-[var(--fg-primary)]"
+          }`}
         >
-          <div className="w-8 h-8 rounded-full bg-[var(--ui-primary-50)] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-[var(--ui-primary-50)] flex items-center justify-center shrink-0">
             <User size={16} className="text-[var(--ui-primary)]" />
           </div>
-          <span className="text-sm font-semibold text-[var(--fg-primary)] hidden md:block">
-            {displayName}
-          </span>
+          {!collapsed && (
+            <span className={`text-sm font-semibold truncate ${
+              inSidebar ? "text-slate-200" : "text-[var(--fg-primary)]"
+            }`}>
+              {displayName}
+            </span>
+          )}
         </button>
 
         {open && (
-          <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-lg z-50 py-2">
+          <div className={`absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-lg z-50 py-2 ${
+            inSidebar ? "translate-y-[-8px] lg:translate-x-[8px]" : ""
+          }`}>
             <div className="px-4 py-2 border-b border-[var(--border)]">
               <p className="font-semibold text-[var(--fg-primary)] text-sm">{displayName}</p>
               <p className="text-xs text-[var(--fg-muted)]">{user?.email || user?.Email}</p>

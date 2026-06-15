@@ -228,7 +228,7 @@ export default function ContractDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex items-center justify-center premium-dashboard-bg">
         <div className="flex flex-col items-center gap-4">
           <Loader2 size={32} className="animate-spin text-[#133B6C]" />
           <p className="font-bold text-[var(--fg-primary)]">Loading contract...</p>
@@ -239,7 +239,7 @@ export default function ContractDetail() {
 
   if (error || !contract) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-base)" }}>
+      <div className="min-h-screen flex items-center justify-center premium-dashboard-bg">
         <div className="text-center">
           <AlertCircle size={48} className="mx-auto text-red-400 mb-3" />
           <p className="text-[var(--fg-primary)] font-bold mb-4">{error || "Contract not found"}</p>
@@ -252,7 +252,7 @@ export default function ContractDetail() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role={role} user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -265,7 +265,7 @@ export default function ContractDetail() {
         </button>
 
         {/* Header */}
-        <div className="glass-morphism rounded-2xl p-6 mb-6">
+        <div className="premium-glass-card rounded-2xl p-6 mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-black text-[var(--fg-primary)]">
@@ -303,7 +303,7 @@ export default function ContractDetail() {
             { label: "Milestones", value: `${milestones.filter(m => m.Status === "approved").length} / ${milestones.length}`, icon: CheckCircle, color: "bg-[#FD8566]" },
             { label: "Messages", value: dashboard?.total_messages || 0, icon: MessageSquare, color: "bg-emerald-500" },
           ].map((stat) => (
-            <div key={stat.label} className="glass-morphism rounded-2xl p-4">
+            <div key={stat.label} className="premium-glass-card rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className={`w-8 h-8 rounded-lg ${stat.color} flex items-center justify-center`}>
                   <stat.icon size={16} className="text-white" />
@@ -334,7 +334,7 @@ export default function ContractDetail() {
         </div>
 
         {/* Tab Content */}
-        <div className="glass-morphism rounded-2xl p-6">
+        <div className="premium-glass-card rounded-2xl p-6">
           {/* OVERVIEW */}
           {activeTab === "overview" && (
             <div className="space-y-6">

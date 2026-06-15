@@ -1,6 +1,10 @@
 """Baseline challenge endpoints — full rebuild."""
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+
+def get_karachi_now():
+    # Karachi is UTC+5
+    return (datetime.now(timezone.utc) + timedelta(hours=5)).isoformat()
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -109,7 +113,7 @@ def start_challenge(
         raise HTTPException(status_code=404, detail="Challenge not found")
 
     session_id = f"ws-{uuid.uuid4().hex[:12]}"
-    started_at = datetime.utcnow().isoformat()
+    started_at = get_karachi_now()
 
     mongo_db.work_sessions.insert_one({
         "session_id": session_id,
@@ -178,15 +182,16 @@ def run_tests(
 
     test_cases = session.get("test_cases", [])
     language = session.get("language", "python")
+    category = session.get("category", "python")
 
-    result = run_code_in_sandbox(data.code, test_cases, language)
+    result = run_code_in_sandbox(data.code, test_cases, language, category)
 
     mongo_db.work_sessions.update_one(
         {"session_id": data.session_id},
         {
             "$set": {"test_results": result, f"files.{data.file}": data.code},
             "$push": {"steps": {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": get_karachi_now(),
                 "action": "test_run",
                 "content": f"passed={result['passed']}/{result['total']}",
                 "file": data.file,
@@ -209,11 +214,41 @@ def submit_challenge(
     if session["freelancer_id"] != current_user.UserID:
         raise HTTPException(status_code=403, detail="Not your session")
 
+    steps = session.get("steps", [])
+    test_runs = [s for s in steps if s.get("action") == "test_run"]
+
+    # ──────────────────────────────────────────────────────────────
+    # ANTI-CHEATING LOGIC
+    # ──────────────────────────────────────────────────────────────
+    if len(steps) < 5 and not test_runs:
+        # Log fraud attempt
+        fraud_log = {
+            "log_id": f"fraud_bl_{data.session_id}_{int(datetime.utcnow().timestamp())}",
+            "session_id": data.session_id,
+            "freelancer_id": current_user.UserID,
+            "detection_type": "low_activity_baseline",
+            "evidence": {
+                "steps_count": len(steps),
+                "test_runs_count": len(test_runs),
+                "code_preview": data.code[:200] if data.code else "",
+            },
+            "confidence_score": 0.9,
+            "flagged_at": get_karachi_now(),
+            "status": "flagged",
+        }
+        mongo_db.fraud_logs.insert_one(fraud_log)
+        
+        raise HTTPException(
+            status_code=400, 
+            detail="Fraud detected: Insufficient activity or no tests run. Please try again with more engagement."
+        )
+
     test_cases = session.get("test_cases", [])
     language = session.get("language", "python")
-    test_results = run_code_in_sandbox(data.code, test_cases, language)
+    category = session.get("category", "python")
+    test_results = run_code_in_sandbox(data.code, test_cases, language, category)
 
-    completed_at = datetime.utcnow().isoformat()
+    completed_at = get_karachi_now()
     mongo_db.work_sessions.update_one(
         {"session_id": data.session_id},
         {"$set": {

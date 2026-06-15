@@ -46,7 +46,7 @@ export default function MyApplications() {
   }, []);
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen flex premium-dashboard-bg">
       <DashboardSidebar role="freelancer" user={profile} />
 
       <main className="flex-1 p-6 overflow-y-auto">
@@ -57,7 +57,7 @@ export default function MyApplications() {
         {loading ? (
           <p className="text-[var(--fg-muted)]">Loading applications...</p>
         ) : applications.length === 0 ? (
-          <div className="glass-morphism rounded-2xl p-8 text-center">
+          <div className="premium-glass-card rounded-2xl p-8 text-center">
             <Briefcase size={40} className="mx-auto text-[var(--fg-muted)] mb-3" />
             <p className="text-[var(--fg-muted)] mb-4">You have not applied to any jobs yet.</p>
             <button type="button" onClick={() => navigate("/jobs")} className="btn-primary">
@@ -71,7 +71,7 @@ export default function MyApplications() {
                 key={app.ApplicationID}
                 type="button"
                 onClick={() => navigate(`/jobs/${app.JobID}`)}
-                className="glass-morphism rounded-2xl p-5 text-left w-full hover:shadow-lg transition-shadow group"
+                className="premium-glass-card rounded-2xl p-5 text-left w-full hover:shadow-lg transition-shadow group"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
