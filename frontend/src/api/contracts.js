@@ -21,15 +21,15 @@ async function apiFetch(path, options = {}) {
 }
 
 export const contractsApi = {
-  // Contracts
+  // Contract CRUD
   create: (data) =>
     apiFetch("/api/contracts", {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  myContracts: () => apiFetch("/api/contracts/my"),
+  list: () => apiFetch("/api/contracts/my"),
   get: (id) => apiFetch(`/api/contracts/${id}`),
-  
+
   // Milestones
   addMilestone: (contractId, data) =>
     apiFetch(`/api/contracts/${contractId}/milestones`, {
@@ -38,55 +38,19 @@ export const contractsApi = {
     }),
   getMilestones: (contractId) => apiFetch(`/api/contracts/${contractId}/milestones`),
   approveMilestone: (milestoneId) =>
-    apiFetch(`/api/contracts/milestones/${milestoneId}/approve`, {
-      method: "PUT",
-    }),
-  
-  // Escrow
+    apiFetch(`/api/contracts/milestones/${milestoneId}/approve`, { method: "PUT" }),
+
+  // Escrow & Payments
   getEscrow: (contractId) => apiFetch(`/api/contracts/${contractId}/escrow`),
   getPayments: (contractId) => apiFetch(`/api/contracts/${contractId}/payments`),
-  
+
   // Disputes
-  raiseDispute: (contractId, description) =>
+  raiseDispute: (contractId, data) =>
     apiFetch(`/api/contracts/${contractId}/disputes`, {
       method: "POST",
-      body: JSON.stringify({ contract_id: contractId, description }),
+      body: JSON.stringify(data),
     }),
   getDisputes: (contractId) => apiFetch(`/api/contracts/${contractId}/disputes`),
 };
 
-export const vpoApi = {
-  // Tasks
-  createTask: (contractId, data) =>
-    apiFetch(`/api/vpo/${contractId}/tasks`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-  getTasks: (contractId) => apiFetch(`/api/vpo/${contractId}/tasks`),
-  updateTask: (contractId, taskId, data) =>
-    apiFetch(`/api/vpo/${contractId}/tasks/${taskId}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-  
-  // Messages
-  sendMessage: (contractId, body, attachments = []) =>
-    apiFetch(`/api/vpo/${contractId}/messages`, {
-      method: "POST",
-      body: JSON.stringify({ body, attachments }),
-    }),
-  getMessages: (contractId) => apiFetch(`/api/vpo/${contractId}/messages`),
-  
-  // Submissions
-  createSubmission: (contractId, data) =>
-    apiFetch(`/api/vpo/${contractId}/submissions`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-  getSubmissions: (contractId) => apiFetch(`/api/vpo/${contractId}/submissions`),
-  getSubmission: (contractId, submissionId) =>
-    apiFetch(`/api/vpo/${contractId}/submissions/${submissionId}`),
-  
-  // Dashboard
-  getDashboard: (contractId) => apiFetch(`/api/vpo/${contractId}/dashboard`),
-};
+export default contractsApi;
