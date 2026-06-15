@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from app.routers import contracts, vpo, analytics
+from app.routers import analytics_client
 
 from app.routers import auth, baseline, dna, profile, categories, jobs
 from app.core.database import Base, engine
@@ -48,7 +49,8 @@ app.include_router(jobs.router)
 app.include_router(contracts.router)
 app.include_router(vpo.router)
 app.include_router(analytics.router)
-
+app.include_router(analytics_client.router)
+# app.include_router(analytics_charts.router)
 
 @app.get("/")
 def root():

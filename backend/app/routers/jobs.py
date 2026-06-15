@@ -23,6 +23,7 @@ from app.schemas import (
     JobPostDetailOut,
     JobApplyRequest,
     ApplicationOut,
+    ApplicationWithFreelancerOut,
     MessageResponse,
     MatchResultsOut,
     FreelancerMatchOut,
@@ -295,13 +296,55 @@ def apply_to_job(
     return application
 
 
-@router.get("/{job_id}/applications", response_model=List[ApplicationOut])
+# @router.get("/{job_id}/applications", response_model=List[ApplicationOut])
+# def get_job_applications(
+#     job_id: int,
+#     current_user=Depends(get_current_client),
+#     db: Session = Depends(get_db),
+# ):
+#     """Client views applicants for their job."""
+#     job = db.query(JobPost).filter(
+#         JobPost.JobID == job_id,
+#         JobPost.ClientID == current_user.UserID,
+#     ).first()
+#     if not job:
+#         raise HTTPException(status_code=404, detail="Job not found or not yours")
+
+#     # JOIN with FreelancerProfile and TrustScore to get name + trust score
+#     applications = db.query(
+#         Application, FreelancerProfile, TrustScore
+#     ).join(
+#         FreelancerProfile, Application.FreelancerID == FreelancerProfile.FreelancerID
+#     ).outerjoin(
+#         TrustScore, FreelancerProfile.FreelancerID == TrustScore.FreelancerID
+#     ).filter(
+#         Application.JobID == job_id
+#     ).order_by(Application.AppliedAt.desc()).all()
+
+#     result = []
+#     for app, profile, trust in applications:
+#         # Build response with freelancer info
+#         app_dict = {
+#             "ApplicationID": app.ApplicationID,
+#             "JobID": app.JobID,
+#             "FreelancerID": app.FreelancerID,
+#             "CoverNote": app.CoverNote,
+#             "Status": app.Status,
+#             "AppliedAt": app.AppliedAt,
+#             "freelancer_name": profile.DisplayName or "Unknown",
+#             "freelancer_headline": profile.Headline or "",
+#             "trust_score": trust.OverallScore if trust else 0.0,
+#             "has_baseline_dna": profile.HasBaselineDNA or False,
+#         }
+#         result.append(app_dict)
+#     return result
+@router.get("/{job_id}/applications", response_model=List[ApplicationWithFreelancerOut])
 def get_job_applications(
     job_id: int,
     current_user=Depends(get_current_client),
     db: Session = Depends(get_db),
 ):
-    """Client views applicants for their job."""
+    """Client views applicants for their job with freelancer names."""
     job = db.query(JobPost).filter(
         JobPost.JobID == job_id,
         JobPost.ClientID == current_user.UserID,
@@ -309,11 +352,24 @@ def get_job_applications(
     if not job:
         raise HTTPException(status_code=404, detail="Job not found or not yours")
 
-    applications = db.query(Application).filter(
+    # JOIN Applications with FreelancerProfiles to get names
+    applications = db.query(
+        Application.ApplicationID,
+        Application.JobID,
+        Application.FreelancerID,
+        FreelancerProfile.DisplayName.label("FreelancerName"),
+        FreelancerProfile.Headline.label("FreelancerHeadline"),
+        Application.CoverNote,
+        Application.Status,
+        Application.AppliedAt,
+    ).join(
+        FreelancerProfile,
+        Application.FreelancerID == FreelancerProfile.FreelancerID
+    ).filter(
         Application.JobID == job_id
     ).order_by(Application.AppliedAt.desc()).all()
-    return applications
 
+    return applications
 
 # ═══════════════════════════════════════════════════════════════
 # MATCHING AGENT RESULTS (NEW — Member 2)

@@ -328,6 +328,20 @@ class ApplicationOut(BaseModel):
     class Config:
         from_attributes = True
 
+class ApplicationWithFreelancerOut(BaseModel):
+        ApplicationID: int
+        JobID: int
+        FreelancerID: int
+        FreelancerName: Optional[str] = None
+        FreelancerHeadline: Optional[str] = None
+        TrustScore: Optional[float] = None
+        HasBaselineDNA: Optional[bool] = False
+        CoverNote: Optional[str]
+        Status: str
+        AppliedAt: Optional[datetime]
+
+        class Config:
+            from_attributes = True
 
 # ── AUTH (extended) ──
 class ChangePasswordRequest(BaseModel):
@@ -650,3 +664,5 @@ class PaymentStatusOut(BaseModel):
     released_at: Optional[str]
     released_by: Optional[int]
     transaction_hash: Optional[str]
+
+    

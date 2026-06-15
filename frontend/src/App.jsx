@@ -74,9 +74,10 @@ export default function App() {
         <Route path="/applicants" element={<ProtectedRoute allowedRole="client"><Applicants /></ProtectedRoute>} />
         <Route path="/payments" element={<ProtectedRoute allowedRole="client"><Payments /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute allowedRole="client"><Analytics /></ProtectedRoute>} />
-
+        <Route path="/analytics" element={<ProtectedRoute allowedRole="client"><Analytics /></ProtectedRoute>} />
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        
       </Routes>
     </BrowserRouter>
   );

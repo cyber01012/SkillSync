@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import AuthMenu from "../dashboard/AuthMenu";
 
+
 const FREELANCER_NAV = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard/freelancer" },
   { label: "Browse Jobs", icon: Briefcase, path: "/jobs" },
@@ -15,6 +16,7 @@ const FREELANCER_NAV = [
   { label: "Active Projects", icon: FolderKanban, path: "/contracts" },
   { label: "Earnings", icon: DollarSign, path: "/earnings" },
   { label: "Profile Settings", icon: Settings, path: "/profile-settings" },
+  // { label: "Analytics", icon: BarChart3, path: "/analytics" },
 ];
 
 const CLIENT_NAV = [
@@ -24,7 +26,8 @@ const CLIENT_NAV = [
   { label: "Applicants", icon: Users, path: "/applicants" },
   { label: "Contracts", icon: Shield, path: "/contracts" },
   { label: "Payments", icon: CreditCard, path: "/payments" },
-  { label: "Analytics", icon: BarChart3, path: "/analytics" },
+  // { label: "Analytics", icon: BarChart3, path: "/analytics" },
+  
 ];
 
 function isNavActive(pathname, path) {
@@ -32,7 +35,7 @@ function isNavActive(pathname, path) {
   if (path === "/applications") return pathname === "/applications";
   if (path === "/post-job") return pathname === "/post-job";
   if (path === "/contracts") return pathname === "/contracts" || /^\/contracts\/\d+$/.test(pathname);
-  if (path === "/analytics") return pathname === "/analytics";
+  // if (path === "/analytics") return pathname === "/analytics";
   if (path === "/my-jobs") return pathname === "/my-jobs";
   if (path === "/applicants") return pathname === "/applicants";
   if (path === "/payments") return pathname === "/payments";

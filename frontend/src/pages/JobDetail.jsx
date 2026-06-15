@@ -37,7 +37,7 @@ function JobDetailsPanel({ job }) {
         </span>
         {job.budget_range && (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-coral-50)] text-[var(--color-coral-dark)] font-semibold">
-            <DollarSign size={14} />
+           <DollarSign size={14} />
             ${job.budget_range.min?.toLocaleString()} – ${job.budget_range.max?.toLocaleString()}
           </span>
         )}
@@ -274,6 +274,7 @@ export default function JobDetail() {
                       <thead>
                         <tr className="text-left text-[var(--fg-muted)] border-b border-[var(--border)]">
                           <th className="pb-3 font-bold">Freelancer</th>
+                          <th className="pb-3 font-bold">Trust Score</th>
                           <th className="pb-3 font-bold">Cover Note</th>
                           <th className="pb-3 font-bold">Status</th>
                           <th className="pb-3 font-bold">Actions</th>
@@ -282,8 +283,36 @@ export default function JobDetail() {
                       <tbody>
                         {applicants.map((app) => (
                           <tr key={app.ApplicationID} className="border-b border-[var(--border)]">
-                            <td className="py-3 font-semibold text-[var(--fg-primary)]">
-                              #{app.FreelancerID}
+                            <td className="py-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#133B6C] to-[#5F90D4] flex items-center justify-center text-white font-bold text-sm">
+                                  {(app.FreelancerName || "?").charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-[var(--fg-primary)]">
+                                    {app.FreelancerName || `Freelancer #${app.FreelancerID}`}
+                                  </p>
+                                  <p className="text-xs text-[var(--fg-muted)]">
+                                    {app.FreelancerHeadline || "Freelancer"}
+                                  </p>
+                                  {app.HasBaselineDNA && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#133B6C]/10 text-xs font-bold text-[#133B6C] mt-1">
+                                      <Sparkles size={10} /> DNA Verified
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${
+                                  app.TrustScore >= 80 ? "bg-emerald-500" : 
+                                  app.TrustScore >= 60 ? "bg-amber-500" : "bg-red-500"
+                                }`} />
+                                <span className="font-semibold text-[var(--fg-primary)]">
+                                  {app.TrustScore?.toFixed(1) || "0.0"}
+                                </span>
+                              </div>
                             </td>
                             <td className="py-3 text-[var(--fg-secondary)] max-w-xs truncate">
                               {app.CoverNote || "—"}
@@ -316,7 +345,6 @@ export default function JobDetail() {
                   </div>
                 )
               )}
-
               {tab === "matches" && (
                 <MatchResults matches={matches} loading={tabLoading} />
               )}
