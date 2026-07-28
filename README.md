@@ -1,28 +1,37 @@
-# 🔄 SkillSync AI
+# 🔄 SkillSync AI — Dual-Database Freelance Platform & Skill DNA Engine
 
-> **AI-Driven Skill Exchange & Peer Mentorship Platform**
+> **Database Systems Project featuring Hybrid Relational & Document Data Architecture (SQL Server & MongoDB) with SkillScore Calculation Engine**
 
+![SQL Server](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC292B?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Skill DNA Engine](https://img.shields.io/badge/Skill%20DNA-SkillScore%20Algorithms-7400B8?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Flask/FastAPI](https://img.shields.io/badge/Backend-Python_API-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Branch](https://img.shields.io/badge/Branch-cyber-ff69b4?style=for-the-badge&logo=git&logoColor=white)
-![AI Enabled](https://img.shields.io/badge/AI-Enabled-7400B8?style=for-the-badge)
 
-SkillSync AI is an intelligent peer-to-peer skill matching platform designed to connect learners and mentors, track skill progression, and automate personalized learning journeys through AI recommendation engines.
+SkillSync AI is a database-driven **Freelance Platform & Skill DNA Analytics Engine**. Rather than relying on static portfolio uploads, SkillSync dynamically constructs a **Freelancer Skill DNA** profile through algorithmic **SkillScore** calculations, proficiency weighting, and dynamic assessment logs.
+
+---
+
+## 🧬 Freelancer Skill DNA & SkillScore Engine
+
+* **📊 Algorithmic SkillScore**: Calculates dynamic competency ratings based on assessment results, task execution speed, and peer evaluations.
+* **🧬 Dynamic Skill DNA**: Synthesizes multi-dimensional skill vectors (technical depth, consistency, problem-solving score) into a living JSON document profile.
+* **🎯 Precise Job Matching**: Queries Skill DNA vectors against client job requirements to find the highest-scoring freelancers automatically.
+
+---
+
+## 💾 Dual-Database Architecture (SQL Server + MongoDB)
+
+| Database System | Data Domain & Architectural Role | Storage Highlights |
+| :--- | :--- | :--- |
+| **Microsoft SQL Server** | **Relational Data & Transactions** | Manages ACID-compliant transactions, client & freelancer user accounts, financial contracts, milestone payments, and relational integrity with T-SQL procedures & foreign keys. |
+| **MongoDB** | **Skill DNA & SkillScore Document Store** | Stores complex, schema-less Freelancer Skill DNA documents, JSON SkillScore breakdown vectors, assessment logs, and dynamic competency matrices for rapid NoSQL querying. |
 
 ---
 
 ## 📌 Branch Information
 
-> 💡 **Note**: This documentation is crafted based on the **`cyber`** branch implementation (`cyber01012/SkillSync/tree/cyber`), which contains the active full-stack AI engine, database seeds, and backend services.
-
----
-
-## 🌟 Features
-
-* **🤖 Smart Skill Matching Engine**: Connects users based on complementary skill offers and requests.
-* **⚡ Python REST API Backend**: Clean architecture with database seeding, file upload pipeline, and authentication module.
-* **🌐 Web Dashboard**: Interactive user interfaces for skill discovery, profile management, and session scheduling.
-* **📊 Developer Handoff Documentation**: Complete onboarding instructions and database seed scripts.
+> 💡 **Note**: This documentation is based on the **`cyber`** branch implementation (`cyber01012/SkillSync/tree/cyber`), containing the active database models, SQL/NoSQL connection drivers, seed benchmarks, and SkillScore calculation scripts.
 
 ---
 
@@ -30,57 +39,59 @@ SkillSync AI is an intelligent peer-to-peer skill matching platform designed to 
 
 ```
 SkillSync/
-├── backend/                                  # Python Backend Service
-│   ├── app/                                  # API routes, models, services & AI logic
-│   ├── seed/                                 # Initial database seed datasets
-│   ├── uploads/                              # Storage for user assets & documents
-│   ├── .env.example                          # Environment variables template
-│   ├── requirements.txt                      # Python dependencies
-│   ├── run.py                                # Application entry point
+├── backend/                                  # Python Backend & Skill Engine
+│   ├── app/                                  # SkillScore algorithms, Skill DNA models, SQL/Mongo drivers
+│   ├── seed/                                 # Initial database seeds (SkillScore benchmarks, test gigs)
+│   ├── .env.example                          # SQL Server & MongoDB connection variables
+│   ├── requirements.txt                      # Dependencies (pyodbc, pymongo, etc.)
+│   ├── run.py                                # API server entry point
 │   └── inst.md                               # Setup instructions
 │
-├── frontend/                                 # Web UI Frontend Client
-├── docs/                                     # System documentation & specs
-└── project-tree.txt                          # Comprehensive directory layout
+├── frontend/                                 # Client & Freelancer Portal
+├── docs/                                     # Skill DNA algorithms, ER diagrams, MongoDB schema design
+└── project-tree.txt                          # Project structure reference
 ```
 
 ---
 
 ## 🚀 Quick Start Guide
 
-### 1. Backend Setup
+### 1. Database Configuration
+
+Set **Microsoft SQL Server** and **MongoDB** credentials in `backend/.env`:
+
+```env
+SQL_SERVER_HOST=localhost
+SQL_SERVER_DB=SkillSyncDB
+SQL_SERVER_USER=sa
+SQL_SERVER_PASSWORD=YourPassword
+
+MONGODB_URI=mongodb://localhost:27017/skillsync_docs
+```
+
+### 2. Backend & Skill Engine Setup
 
 ```bash
-# Navigate to the backend directory
 cd backend
-
-# Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
-# Windows:
+# Windows
 venv\Scripts\activate
-# macOS/Linux:
+# macOS/Linux
 # source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
 
-# Create environment file from template
-copy .env.example .env     # Windows
-# cp .env.example .env     # Linux/macOS
+# Run seed scripts to generate SkillScore benchmarks & DB tables
+python seed/seed_databases.py
 
-# Run the backend server
 python run.py
 ```
 
-### 2. Frontend Setup
+### 3. Frontend Setup
 
 ```bash
-# Navigate to frontend directory
 cd frontend
-
-# Install dependencies and start server
 npm install
 npm run dev
 ```
@@ -89,26 +100,10 @@ npm run dev
 
 ## 🧰 Tech Stack
 
-* **Backend**: Python 3.10+, Flask / FastAPI, SQLite / PostgreSQL
+* **Databases**: Microsoft SQL Server (Relational RDBMS), MongoDB (NoSQL Document Store)
+* **Algorithms**: Freelancer Skill DNA Synthesis & SkillScore Calculation Engine
+* **Backend**: Python 3.10+, PyODBC, PyMongo, Flask / FastAPI
 * **Frontend**: HTML5, CSS3, JavaScript / React
-* **AI & Algorithms**: Natural Language Skill Vectorization & Matching Engine
-* **Tooling**: Python Virtual Environment (`venv`), dotenv
 
 ---
 
-## 🤝 Contributing & Branching
-
-1. Switch to the `cyber` branch:
-   ```bash
-   git checkout cyber
-   ```
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request into `cyber` or `main`.
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for details.
