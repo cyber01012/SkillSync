@@ -1,4 +1,5 @@
 # 🔄 SkillSync AI — Dual-Database Freelance Platform & Skill DNA Engine
+<img width="1366" height="681" alt="image" src="https://github.com/user-attachments/assets/5a3d9491-40f2-4e6c-9d94-5d7667cc2e22" />
 
 > **Database Systems Project featuring Hybrid Relational & Document Data Architecture (SQL Server & MongoDB) with SkillScore Calculation Engine**
 
@@ -104,6 +105,11 @@ npm run dev
 * **Algorithms**: Freelancer Skill DNA Synthesis & SkillScore Calculation Engine
 * **Backend**: Python 3.10+, PyODBC, PyMongo, Flask / FastAPI
 * **Frontend**: HTML5, CSS3, JavaScript / React
+
+IMAGES
+<img width="1366" height="681" alt="image" src="https://github.com/user-attachments/assets/df8cd81f-32e3-4a7b-b77d-c83089c9fc19" />
+<img width="1366" height="660" alt="image" src="https://github.com/user-attachments/assets/4707e8a3-52c6-4134-a39a-a411a45fd64a" />
+<img width="1366" height="636" alt="image" src="https://github.com/user-attachments/assets/d7403c0c-71ad-484d-91c2-07eadfedaeb4" />
 
 ---
 
